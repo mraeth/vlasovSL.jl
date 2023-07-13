@@ -12,7 +12,7 @@ struct DistributionParticles<:Distribution
 
 end
 
-function Distribution(grid::simulationData, epsilon::Float64)
+function Distribution(grid::Grid, epsilon::Float64)
     fct_sp(x) =1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ) 
     fct_v(v) = exp(-v^2 / 2) / sqrt(2*pi)
     dx = map(x->fct_sp.(x), grid.xaxes)
@@ -24,7 +24,7 @@ function Distribution(grid::simulationData, epsilon::Float64)
 end
 
 
-function Distribution(grid::simulationData, epsilon :: Float64 ,nParticles :: Int64)
+function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64)
     x = 0:0.00001:grid.max[1]-0.00001;
     P = 1. .+epsilon .*cos.(2pi/(grid.xaxes[1][end]+grid.delta[1]) .* x);
     r = StatsBase.sample(x, Weights(P),nParticles);
@@ -37,12 +37,13 @@ function deltaf(f::DistributionGrid)
 end
 
 
-function plotf(f::DistributionGrid,grid::simulationData)
+function plotf(f::DistributionGrid,grid::Grid)
     return heatmap(f.data)
 end
 
 
-function plotf(f::DistributionParticles,grid::simulationData)
-    return heatmap(Hist2D((f.x,f.v),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2)
+function plotf(f::DistributionParticles,grid::Grid)
+    h = Hist2D((f.x,f.v),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
+    return heatmap(h/mean(h))
 end
 

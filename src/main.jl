@@ -1,54 +1,52 @@
 
 using vlasovSL
 
-
 Lx = 4pi;
-nx = 64;
+nx = 32;
 
-vmax = 5;
+vmax = 6;
 nv = 64;
 
-grid = vlasovSL.simulationData([0.,-vmax],[Lx,vmax],[Lx/nx,2*vmax/nv],0.1,1);
-f = vlasovSL.Distribution(grid,0.1);
-fp = vlasovSL.Distribution(grid,0.1,1000000);
+epsilon = 0.2
 
-rho = vlasovSL.compute_density(f,grid);
-e = vlasovSL.compute_e(rho,grid);
+grid = vlasovSL.Grid([0.,-vmax],[Lx,vmax],[Lx/nx,2*vmax/nv],0.05,1);
 
-sim = Simulation(f, rho, e,grid,[[],[]]);
-simp = Simulation(fp, rho, e,grid,[[],[]]);
+f = vlasovSL.Distribution(grid,epsilon);
+fp = vlasovSL.Distribution(grid,epsilon,10000000);
 
-println("Performance SL")
-@time timeStep!(sim)
-println("Performance PIC")
-@time timeStep!(simp)
-
-println(" ")
-println(" ")
-println(" ")
-println(" ")
+sim = vlasovSL.Simulation(f,grid)
+simp =vlasovSL.Simulation(fp,grid);
 
 println("Performance SL")
-@time timeStep!(sim)
+@time vlasovSL.timeStep!(sim)
 println("Performance PIC")
-@time timeStep!(simp)
+@time vlasovSL.timeStep!(simp)
+println(" ")
+println("Performance SL")
+@time vlasovSL.timeStep!(sim)
+println("Performance PIC")
+@time vlasovSL.timeStep!(simp)
 
-for i = vlasovSL.ProgressBar(1:1000)
-    timeStep!(sim)
-    diagnostics(sim,i)
-    timeStep!(simp)
-    diagnostics(simp,i)
+for i = vlasovSL.ProgressBar(1:2000)
+    vlasovSL.timeStep!(sim)
+    vlasovSL.diagnostics(sim,i)
+    vlasovSL.timeStep!(simp)
+    vlasovSL.diagnostics(simp,i)
 
     p1 =vlasovSL.plotf(sim.f,sim.grid)
     p2 =vlasovSL.plotf(simp.f,sim.grid)
     p3 = vlasovSL.plot(simp.diag[1],simp.diag[2], yscale=:log10)
     p3 = vlasovSL.plot!(sim.diag[1],sim.diag[2], yscale=:log10)
+
+    p4 = vlasovSL.plot(simp.rho.data)
+    p4 = vlasovSL.plot!(sim.rho.data)
     
-    vlasovSL.display(vlasovSL.plot(p1,p2,p3, layout = (1,3), size = (1500,500)))
+    vlasovSL.display(vlasovSL.plot(p1,p2,p3,p4, layout = (1,4), size = (1800,400)))
 
 
 end
 
+sleep(100)
 
 
 
