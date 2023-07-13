@@ -5,11 +5,23 @@ struct DistributionGrid<:Distribution
     data :: Array
 end
 
+struct DistributionGrid1d1v<:Distribution
+    data :: Array{Float64,2}
+end
+struct DistributionGrid1d2v<:Distribution
+    data :: Array{Float64,3}
+end
+
 struct DistributionParticles<:Distribution
     x :: Vector
     v :: Vector
+end
 
-
+function DistributionGrid(data ::Array{Float64,2})
+    return DistributionGrid1d1v(data)
+end
+function DistributionGrid(data ::Array{Float64,3})
+    return DistributionGrid1d2v(data)
 end
 
 function Distribution(grid::Grid, epsilon::Float64)
@@ -18,7 +30,7 @@ function Distribution(grid::Grid, epsilon::Float64)
     dx = map(x->fct_sp.(x), grid.xaxes)
     dv = map(x->fct_v.(x), grid.vaxes)
     
-    da = hcat(dx,dv)
+    da = vcat(dx,dv)
     outer_product(vs) =  .*([reshape(vs[d], (ntuple(Returns(1), d-1)..., :)) for d in 1:length(vs)]... )
     return DistributionGrid(outer_product(da))
 end
@@ -32,12 +44,12 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64)
     return DistributionParticles(r,randn(nParticles))
 end
 
-function deltaf(f::DistributionGrid)
+function deltaf(f::DistributionGrid1d1v)
     return reduce(vcat, transpose.(map(i->f.data[i,begin:end] - reshape(mean(f.data, dims = 1),size(f.data)[2]),1:size(f.data)[1])))
 end
 
 
-function plotf(f::DistributionGrid,grid::Grid)
+function plotf(f::DistributionGrid1d1v,grid::Grid)
     return heatmap(f.data)
 end
 

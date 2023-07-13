@@ -6,7 +6,7 @@ struct VectorField
     data :: Array{Array}
 end
 
-function compute_density(f :: DistributionGrid, grid)
+function compute_density(f :: DistributionGrid1d1v, grid)
     rho = reshape(sum(f.data, dims =2)*grid.delta[2], size(f.data)[1])
     return scalarField(rho .- mean(rho))
 end

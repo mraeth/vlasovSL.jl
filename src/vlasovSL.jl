@@ -4,7 +4,8 @@ using LinearAlgebra, DataInterpolations, FFTW, Statistics, FHist, StatsBase,Plot
 
 include("grid.jl")
 include("distribution.jl")
-include("advector.jl")
+include("advectorSL.jl")
+include("advectorPIC.jl")
 include("fields.jl")
 include("simulation.jl")
  
