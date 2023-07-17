@@ -1,8 +1,12 @@
 
 
+function R(omega)
+    return [[cos(omega) ,sin(omega)] [-sin(omega), cos(omega)]]
+end
+
 function advect1DFourier!(data::AbstractArray{Float64,1}, shift, grid::Grid)
     sshift = 2pi * shift .* fftfreq(size(data)[1])
-    data = real(ifft(fft(data) .* exp.(-sshift .* im)))
+    data .= real(ifft(fft(data) .* exp.(-sshift .* im)))
 end
 
 
@@ -22,16 +26,14 @@ end
 
 
 function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
+    xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.dt * grid.vaxes[1][i] / grid.delta[1],  grid.dt * grid.vaxes[2][i] / grid.delta[1]] , 1:length(grid.vaxes[1]))
     for iv1 = 1:size(f.data)[2]
         for iv2 = 1:size(f.data)[3]
-            fshift = grid.dt * grid.vaxes[1][iv] / grid.delta[1]
-            f.data[begin:end, iv1, iv2] = advector(f.data[begin:end, iv1, iv2], fshift, grid)
+            fshift = grid.dt * first.(xdisp)[iv1] / grid.delta[1]
+            advector(view(f.data, :,iv1, iv2), fshift, grid)
         end
     end
 end
-
-
-
 
 
 function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
@@ -42,12 +44,13 @@ function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64
 end
 
 function advectV!(f::DistributionGrid1d2v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
+    vdisp = map(i->R(grid.time[grid.index[1]])*[grid.dt*shiftArray[i]/grid.delta[2],0],1:length(shiftArray))
     for iv1 = 1:size(f.data)[2]
-        advectV!(Distribution(f.data[:, iv1, :]), grid, shiftArray, advector)
+        advectV!(DistributionGrid1d1v(view(f.data,:,iv1,:)), grid, first.(vdisp), advector)
     end
 
     for iv2 = 1:size(f.data)[3]
-        advectV!(Distribution(f.data[:, :, iv2]))
+        advectV!(DistributionGrid1d1v(view(f.data,:,:,iv2)), grid, first.(vdisp), advector)
     end
 
 end

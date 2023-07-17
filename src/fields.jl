@@ -11,6 +11,11 @@ function compute_density(f :: DistributionGrid1d1v, grid)
     return scalarField(rho .- mean(rho))
 end
 
+function compute_density(f :: DistributionGrid1d2v, grid)
+    rho = reshape(sum(f.data, dims =(2,3))*grid.delta[2]*grid.delta[3], size(f.data)[1])
+    return scalarField(rho .- mean(rho))
+end
+
 function compute_density(f :: DistributionParticles,grid)
     hist=Hist1D(f.x,0:grid.delta[1]:grid.max[1]).sumw2
     return scalarField(hist/mean(hist).-1)

@@ -2,14 +2,14 @@
 abstract type Distribution end
 
 struct DistributionGrid<:Distribution
-    data :: Array
+    data :: AbstractArray
 end
 
 struct DistributionGrid1d1v<:Distribution
-    data :: Array{Float64,2}
+    data :: AbstractArray{Float64,2}
 end
 struct DistributionGrid1d2v<:Distribution
-    data :: Array{Float64,3}
+    data :: AbstractArray{Float64,3}
 end
 
 struct DistributionParticles<:Distribution
@@ -24,8 +24,8 @@ function DistributionGrid(data ::Array{Float64,3})
     return DistributionGrid1d2v(data)
 end
 
-function Distribution(grid::Grid, epsilon::Float64)
-    fct_sp(x) =1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ) 
+function Distribution(grid::Grid, epsilon::Float64, initFunc = (x-> (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))))
+    fct_sp(x) = initFunc(x)
     fct_v(v) = exp(-v^2 / 2) / sqrt(2*pi)
     dx = map(x->fct_sp.(x), grid.xaxes)
     dv = map(x->fct_v.(x), grid.vaxes)
@@ -51,6 +51,10 @@ end
 
 function plotf(f::DistributionGrid1d1v,grid::Grid)
     return heatmap(f.data)
+end
+
+function plotf(f::DistributionGrid1d2v,grid::Grid)
+    return heatmap(f.data[:,:,convert(Int64,(length(grid.vaxes[2])-1)/2)])
 end
 
 
