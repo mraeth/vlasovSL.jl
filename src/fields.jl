@@ -11,6 +11,20 @@ function compute_density(f :: DistributionGrid1d1v, grid)
     return scalarField(rho .- mean(rho))
 end
 
+function compute_density(f :: DistributionGrid1d1vC, grid)
+    if f.isft[2]
+        rho = f.data[:,1]
+    else
+        rho = reshape(sum(f.data, dims =2)*grid.delta[2], size(f.data)[1])
+    end
+
+    if f.isft[1]
+        return scalarField(real.(ifft(rho)))
+    else
+        return scalarField(rho)
+    end
+end
+
 function compute_density(f :: DistributionGrid1d2v, grid)
     rho = reshape(sum(f.data, dims =(2,3))*grid.delta[2]*grid.delta[3], size(f.data)[1])
     return scalarField(rho .- mean(rho))

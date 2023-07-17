@@ -5,9 +5,19 @@ struct DistributionGrid<:Distribution
     data :: AbstractArray
 end
 
-struct DistributionGrid1d1v<:Distribution
+abstract type DistributionGrid1d1vAbstract<:Distribution end
+
+
+struct DistributionGrid1d1v<:DistributionGrid1d1vAbstract
     data :: AbstractArray{Float64,2}
 end
+
+
+struct DistributionGrid1d1vC<:DistributionGrid1d1vAbstract
+    data :: AbstractArray{ComplexF64,2}
+    isft :: Vector{Bool}
+end
+
 struct DistributionGrid1d2v<:Distribution
     data :: AbstractArray{Float64,3}
 end
@@ -35,6 +45,19 @@ function Distribution(grid::Grid, epsilon::Float64, initFunc = (x-> (1 .+ epsilo
     return DistributionGrid(outer_product(da))
 end
 
+function Distribution(grid::Grid, epsilon::Float64, isft :: Vector{Bool}, initFunc = (x-> (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))))
+    dist = Distribution(grid, epsilon, initFunc)
+
+    dmfft = []
+    for i in eachindex(isft) if(isft[i]) push!(dmfft,i) end end
+
+    DistributionGrid1d1vC(fft(dist.data,dmfft), isft)
+
+
+end
+
+
+
 
 function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64)
     x = 0:0.00001:grid.max[1]-0.00001;
@@ -53,9 +76,17 @@ function plotf(f::DistributionGrid1d1v,grid::Grid)
     return heatmap(f.data)
 end
 
+function plotf(f::DistributionGrid1d1vC,grid::Grid)
+    dmfft = []
+    for i in eachindex(f.isft) if(f.isft[i]) push!(dmfft,i) end end
+
+    return heatmap(real.(ifft(f.data,dmfft)))
+end
+
 function plotf(f::DistributionGrid1d2v,grid::Grid)
     return heatmap(f.data[:,:,convert(Int64,(length(grid.vaxes[2])-1)/2)])
 end
+
 
 
 function plotf(f::DistributionParticles,grid::Grid)

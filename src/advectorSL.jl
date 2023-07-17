@@ -4,42 +4,52 @@ function R(omega)
     return [[cos(omega) ,sin(omega)] [-sin(omega), cos(omega)]]
 end
 
-function advect1DFourier!(data::AbstractArray{Float64,1}, shift, grid::Grid)
+function advect1DFourier!(data::AbstractArray{Float64,1}, shift)
+    sshift = 2pi * shift .* fftfreq(size(data)[1])
+    data .= real(ifft(fft(data) .* exp.(-sshift .* im)))
+end
+
+function advect1DFourier!(data::AbstractArray{ComplexF64,1}, shift)
     sshift = 2pi * shift .* fftfreq(size(data)[1])
     data .= real(ifft(fft(data) .* exp.(-sshift .* im)))
 end
 
 
-function advect1Dspline!(data::AbstractArray{Float64,1}, shift, grid::Grid)
+function advect1DFourierC!(data::AbstractArray{ComplexF64,1}, shift)
+    sshift = 2pi * shift .* fftfreq(size(data)[1])
+    data .= data.* exp.(-sshift .* im)
+end
+
+
+function advect1Dspline!(data::AbstractArray{Float64,1}, shift)
     itp = interpolate([[data[end]]; data; [data[begin]]], BSpline(Quadratic(Periodic(OnGrid()))))
     sitp = scale(itp, 0:length(data)+1)
     data = sitp((1:length(data)) .- shift)
 end
 
 
-function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
+function advectX!(f::DistributionGrid1d1vAbstract, grid::Grid, advector=advect1DFourier!)
     for iv = 1:size(f.data)[2]
         fshift = grid.dt * grid.vaxes[1][iv] / grid.delta[1]
-        advector(view(f.data, :, iv), fshift, grid)
+        advector(view(f.data, :, iv), fshift)
     end
 end
-
 
 function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
     xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.dt * grid.vaxes[1][i] / grid.delta[1],  grid.dt * grid.vaxes[2][i] / grid.delta[1]] , 1:length(grid.vaxes[1]))
     for iv1 = 1:size(f.data)[2]
         for iv2 = 1:size(f.data)[3]
             fshift = grid.dt * first.(xdisp)[iv1] / grid.delta[1]
-            advector(view(f.data, :,iv1, iv2), fshift, grid)
+            advector(view(f.data, :,iv1, iv2), fshift)
         end
     end
 end
 
 
-function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
+function advectV!(f::DistributionGrid1d1vAbstract, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
     for ix = 1:size(f.data)[1]
         fshift = grid.dt * shiftArray[ix] / grid.delta[2]
-        advector(view(f.data, ix, :), fshift, grid)
+        advector(view(f.data, ix, :), fshift)
     end
 end
 
