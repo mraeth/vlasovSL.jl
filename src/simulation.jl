@@ -1,17 +1,18 @@
 
 struct Simulation
     f::Distribution
-    rho::vlasovSL.scalarField
-    e::vlasovSL.VectorField
-    grid::vlasovSL.Grid
+    rho::ScalarField
+    phi::ScalarField
+    e::VectorField
+    grid::Grid
     diag::Array
 end
 
 function Simulation(f::Distribution,grid::Grid)
-
-    rho = vlasovSL.compute_density(f,grid);
-    e = vlasovSL.compute_e(rho,grid);
-    return Simulation(f, rho, e,grid,[[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
+    rho = ScalarField(zeros(length(grid.xaxes[1]))) 
+    phi = ScalarField(zeros(length(grid.xaxes[1]))) 
+    e = VectorField([zeros(length(grid.xaxes[1]))])
+    return Simulation(f, rho,phi, e,grid,[[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
 end
 
 function diagnostics(sim::Simulation, iTime :: Int64)
@@ -19,3 +20,4 @@ function diagnostics(sim::Simulation, iTime :: Int64)
    push!(sim.diag[2], sqrt(vlasovSL.mean(sim.rho.data.^2)))
    sim.diag[3][iTime,:] = sim.rho.data
 end
+

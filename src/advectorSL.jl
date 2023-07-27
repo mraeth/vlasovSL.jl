@@ -25,6 +25,7 @@ function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!
 end
 
 
+
 function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
     xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.dt * grid.vaxes[1][i] / grid.delta[1],  grid.dt * grid.vaxes[2][i] / grid.delta[1]] , 1:length(grid.vaxes[1]))
     for iv1 = 1:size(f.data)[2]
