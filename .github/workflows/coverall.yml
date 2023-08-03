@@ -1,7 +1,4 @@
 name: 'Upload Julia coveralls results'
-description: 'Upload Julia test coverage results to codecov'
-author: 'David Anthoff'
-
 on:
   push:
     branches:
