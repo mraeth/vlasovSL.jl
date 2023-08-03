@@ -31,20 +31,37 @@ fp1d2vFull = Distribution(grid1d2v, epsilon, 1000000; initFuncv=(v-> v^2*exp(-v^
 
 fs = [(f1d1v,grid1d1v), (f1d2v,grid1d2v), (fp1d1vDelta,grid1d1v), (fp1d1vFull,grid1d1v)]#, (fp1d2vDelta,grid1d2v), (fp1d2vFull,grid1d2v)];
 
+
+suite = BenchmarkGroup()
+suite["AdvectX"] = BenchmarkGroup()
+suite["AdvectV"] = BenchmarkGroup()
+suite["computeRho"] = BenchmarkGroup()
+rho1d1v = ScalarField(zeros(nx))
+e = VectorField([ones(nx)])
+
+for f in fs
+    suite["AdvectX"][string(typeof(f[1]))] = @benchmarkable advectX!($f[1], $f[2])
+    suite["AdvectV"][string(typeof(f[1]))] = @benchmarkable advectV!($f[1], $f[2], $e.data[1])
+    suite["computeRho"][string(typeof(f[1]))] = @benchmarkable compute_density!($rho1d1v, $f[1], $f[2])
+end
+
+tune!(suite)
+results = run(suite, verbose = true)
+
+BenchmarkTools.save("output.json", median(results))
+
 for f in fs 
     print("Performance Advect x for ")
     print(typeof(f[1]), ": ")
     println(@elapsed advectX!(f[1], f[2])) end
 
 println()
-rho1d1v = ScalarField(zeros(nx))
 for f in fs
     print("Performance Compute Density for ")
     print(typeof(f[1]), ": ")
     println(@elapsed compute_density!(rho1d1v, f[1], f[2])) end
 
 println()
-e = VectorField([ones(nx)])
 for f in fs
     print("Performance Advect v for ")
     print(typeof(f[1]), ": ")
