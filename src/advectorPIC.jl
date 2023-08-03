@@ -21,7 +21,7 @@ function advectV!(f::DistributionParticles{Float64,1,1,deltaF}, grid::Grid, shif
 
 end
 
-function advectX!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid)
+function advectX!(f::DistributionParticles{Float64,1,2}, grid::Grid)
     xdisp = @. R(-grid.time[grid.index[1]])[1,1]* f.v[1] +  R(-grid.time[grid.index[1]])[1,2]* f.v[2]
      @. f.x[1] =mod(f.x[1] +  grid.dt *xdisp, grid.max[1])
 end

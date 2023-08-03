@@ -27,13 +27,13 @@ function compute_density!(rho::ScalarField{T}, f :: DistributionGrid1d2v, grid::
     return rho
 end
 
-function compute_density!(rho::ScalarField{T}, f :: DistributionParticles,grid::Grid) where T
-    hist=Hist1D(f.x,0:grid.delta[1]:grid.max[1]).sumw2
+function compute_density!(rho::ScalarField{T}, f :: DistributionParticles{Float64,1,1,fullF},grid::Grid) where T
+    hist=Hist1D(f.x[1],0:grid.delta[1]:grid.max[1]).sumw2
     rho.data .= hist/mean(hist).-1 
     return rho
 end
 
-function compute_density!(rho::ScalarField{T}, f :: DistributionParticles{Float64,1,1,deltaF},grid::Grid) where T
+function compute_density!(rho::ScalarField{T}, f :: DistributionParticles{Float64,1},grid::Grid) where T
     @assert length(rho.data) == length(grid.xaxes[1])
     frac = 1/length(f.x[1])*length(grid.xaxes[1])
     idx = zeros(Int,length(f.x[1]))

@@ -30,11 +30,11 @@ simp = Simulation(fp, grid);
 
 
 function timeStep!(sim::Simulation)
-    advectX!(sim.f, sim.grid)
-    compute_density!(sim.rho, sim.f, sim.grid)
-    poisson!(sim.phi, sim.rho, sim.grid)
-    compute_e!(sim.e, sim.phi, sim.grid)
-    advectV!(sim.f, sim.grid, -1 .*sim.e.data[1])
+    @time advectX!(sim.f, sim.grid)
+    @time compute_density!(sim.rho, sim.f, sim.grid)
+    @time poisson!(sim.phi, sim.rho, sim.grid)
+    @time compute_e!(sim.e, sim.phi, sim.grid)
+    @time advectV!(sim.f, sim.grid, -1 .*sim.e.data[1])
 end
 
 println("Performance SL")

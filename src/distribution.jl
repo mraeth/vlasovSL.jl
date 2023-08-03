@@ -51,10 +51,11 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     sv = grid.min[2]:0.00001:grid.max[2]-0.00001;
     v1 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     v2 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
+    w = ones(length(x))
     if length(grid.vaxes) == 1
-        return DistributionParticles{Float64, 1,1,fullF}([x],[v1],ones(length(x)),["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
+        return DistributionParticles{Float64, 1,1,fullF}([x],[v1],w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
     elseif length(grid.vaxes) == 2
-        return DistributionParticles{Float64, 1,2,fullF}([x],[v1,v2],["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
+        return DistributionParticles{Float64, 1,2,fullF}([x],[v1,v2],w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
     end
     
 end
@@ -71,7 +72,7 @@ function DeltaDistribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     if length(grid.vaxes) == 1
         return DistributionParticles{Float64, 1,1,deltaF}([r], [v1], w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
     elseif length(grid.vaxes) == 2
-        return DistributionParticles{Float64, 1,2,deltaF}([r],[v1,v2],  ["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
+        return DistributionParticles{Float64, 1,2,deltaF}([r],[v1,v2],w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
     end
 end
 
