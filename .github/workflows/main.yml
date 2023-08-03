@@ -28,7 +28,7 @@ jobs:
           # What benchmark tool the output.txt came from
           tool: 'julia'
           # Where the output from the benchmark tool is stored
-          output-file-path: output.txt
+          output-file-path: output.json
           # Where the previous data file is stored
           external-data-json-path: ./cache/benchmark-data.json
           # Workflow will fail when an alert happens
