@@ -44,6 +44,22 @@ Pkg.activate(".")
 Pkg.instantiate()
 ```
 
+1D-1V Simulations with Future Multi-Dimensional Extension
+
+Currently, the vlasovSL.jl project supports 1D-1V simulations, where the distribution function is represented as a function of a single spatial dimension and a single velocity dimension. This restriction allows for efficient and accurate simulations of certain plasma scenarios. However, we understand that there is a demand for simulations in higher dimensions to model more complex plasma phenomena accurately.
+
+We are actively working on extending the vlasovSL.jl solver to handle multi-dimensional simulations, where the distribution function will be a function of multiple spatial and velocity dimensions. The multi-dimensional extension is a complex task, involving additional computational challenges and algorithmic considerations.
+
+We are committed to providing a robust and performant multi-dimensional extension that maintains the accuracy and efficiency of the 1D-1V solver. Our goal is to support simulations in 2D and 3D configurations, enabling users to explore a wider range of plasma physics scenarios.
+Performance Data
+
+For users interested in the performance of relevant functions within vlasovSL.jl, we have compiled performance data that can be accessed at the following link:
+
+https://mraeth.github.io/vlasovSL.jl/dev/bench/index.html
+
+The performance data includes benchmarks for critical functions involved in the Semi-Lagrangian solver and the PIC solver. It provides valuable insights into the efficiency and resource requirements of the simulations, allowing users to optimize their code and choose appropriate parameters for their specific scenarios.
+
+
 ## Contributing
 
 Contributions to vlasovSL.jl are welcome! If you'd like to contribute, fork the repository, make your changes, and submit a pull request. Please ensure your code adheres to the project's coding style and passes all tests.
