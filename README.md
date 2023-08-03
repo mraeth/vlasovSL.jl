@@ -28,7 +28,7 @@ Follow these steps to set up the project:
 2. Clone this repository to your local machine:
 
 ```bash
-git clone https://github.com/your_username/vlasovSL.jl.git
+git clone https://github.com/mraeth/vlasovSL.jl.git
 ```
 
 3. Change the working directory to the project folder:
