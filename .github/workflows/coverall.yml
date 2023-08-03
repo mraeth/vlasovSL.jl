@@ -12,9 +12,9 @@ on:
 branding:
   icon: 'upload'
   color: 'gray-dark'
-
-runs:
-  using: 'composite'
-  steps:
-    - run: julia --color=yes -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
-      shell: bash
+jobs:
+  runs:
+    using: 'composite'
+    steps:
+      - run: julia --color=yes -e 'using Pkg; Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
+        shell: bash
