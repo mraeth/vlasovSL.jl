@@ -115,7 +115,6 @@ end
     @test testxAdvectorSL(vlasovSL.advect1DFourier!) < 1e-13
 
     for k0 = 0:10
-        println("k0 = ",k0)
         @test testComputeE(k0)<1e-12
         @test testPoisson(k0)<1e-12
         @test testAdiabatic(k0)<1e-12
