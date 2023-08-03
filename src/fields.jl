@@ -42,6 +42,7 @@ function compute_density!(rho::ScalarField{T}, f :: DeltaDistributionParticles1d
     for i in eachindex(f.w) 
         rho.data[idx[i]] += f.w[i] *frac
     end
+    rho.data .= rho.data .- mean(rho.data)
     return rho
 end
 

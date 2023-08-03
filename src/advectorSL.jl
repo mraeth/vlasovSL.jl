@@ -17,11 +17,20 @@ function advect1Dspline!(data::AbstractArray{Float64,1}, shift, grid::Grid)
 end
 
 
-function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
-    for iv = 1:size(f.data)[2]
+function advectX2!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
+    Threads.@threads for iv = 1:size(f.data)[2]
         fshift = grid.dt * grid.vaxes[1][iv] / grid.delta[1]
         advector(view(f.data, :, iv), fshift, grid)
     end
+end
+
+function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
+    ff = fft(f.data,1)
+    for iv = 1:size(ff)[2]
+        sshift =grid.dt * grid.vaxes[1][iv] / grid.delta[1]*2pi  .* fftfreq(size(f.data)[1])
+         @. ff[:,iv]*=exp.(-sshift .* im)
+    end
+    f.data .= real(ifft(ff,1))
 end
 
 
@@ -37,12 +46,23 @@ function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!
 end
 
 
-function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
-    for ix = 1:size(f.data)[1]
+function advectV2!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
+    Threads.@threads for ix = 1:size(f.data)[1]
         fshift = grid.dt * shiftArray[ix] / grid.delta[2]
         advector(view(f.data, ix, :), fshift, grid)
     end
 end
+
+
+function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
+    ff = fft(f.data,2)
+    for ix = 1:size(ff)[1]
+        sshift = grid.dt * shiftArray[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[2])
+         @. ff[ix,:]*=exp.(-sshift .* im)
+    end
+    f.data .= real(ifft(ff,2))
+end
+
 
 function advectV!(f::DistributionGrid1d2v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
     vdisp = map(i->R(grid.time[grid.index[1]])*[grid.dt*shiftArray[i]/grid.delta[2],0],1:length(shiftArray))
