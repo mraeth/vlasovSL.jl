@@ -2,7 +2,7 @@
 
 
 function advectX!(f::DistributionParticles{Float64,1,1}, grid::Grid)
-       @. f.x[1] =  mod(f.x[1]+  grid.dt*f.v[1], grid.max[1]-1e-5)
+        @. f.x[1] =  mod(f.x[1]+  grid.dt*f.v[1], grid.max[1]-1e-5)
 end
 
 

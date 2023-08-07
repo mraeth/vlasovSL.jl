@@ -21,8 +21,8 @@ end
 
 
 function plotf(f::DistributionParticles{Float64,1,1,fullF},grid::Grid)
-    h = Hist2D((f.v,f.x),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
-    return heatmap(h/mean(h))
+    h = Hist2D((f.v[1],f.x[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
+    return heatmap(vlasovSL.Hist2D((f.x[1],f.v[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2)
 end
 
 function scatterf(f::DistributionParticles,grid::Grid)

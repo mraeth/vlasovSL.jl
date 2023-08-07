@@ -23,18 +23,18 @@ initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) = (v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))
 
 f = Distribution(grid, epsilon; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(2*pi)));
-fp = DeltaDistribution(grid, epsilon, 1000000; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(2*pi)));
+fp = Distribution(grid, epsilon, 1000000; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(2*pi)));
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
 
 
 function timeStep!(sim::Simulation)
-    @time advectX!(sim.f, sim.grid)
-    @time compute_density!(sim.rho, sim.f, sim.grid)
-    @time poisson!(sim.phi, sim.rho, sim.grid)
-    @time compute_e!(sim.e, sim.phi, sim.grid)
-    @time advectV!(sim.f, sim.grid, -1 .*sim.e.data[1])
+     advectX!(sim.f, sim.grid)
+     compute_density!(sim.rho, sim.f, sim.grid)
+     poisson!(sim.phi, sim.rho, sim.grid)
+     compute_e!(sim.e, sim.phi, sim.grid)
+     advectV!(sim.f, sim.grid, -1 .*sim.e.data[1])
 end
 
 println("Performance SL")
