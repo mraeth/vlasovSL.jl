@@ -33,6 +33,9 @@ function Distribution(grid::Grid, epsilon;
 end
 
 
+DistributionParticles1d1v = DistributionParticles{Float64,1,1}
+DistributionParticles1d2v = DistributionParticles{Float64,1,2}
+
 function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;  
     initFuncx = (x-> (1. + epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi))) 
@@ -45,7 +48,7 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     if length(grid.vaxes) == 1
         return DistributionParticles{Float64, 1,1,fullF}([x],[v1],w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
     elseif length(grid.vaxes) == 2
-        return DistributionParticles{Float64, 1,2,fullF}([x],[v1,v2],w,["red","blue"][trunc.(Int64,sign.(v1)./2 .+1.5)])
+        return DistributionParticles{Float64, 1,2,fullF}([x],[v1,v2],w,["red","blue"][trunc.(Int64,sign.(v1.*v2)./2 .+1.5)])
     end
     
 end

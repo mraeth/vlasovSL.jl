@@ -20,16 +20,21 @@ end
 
 
 function plotf(f::DistributionGrid1d2v,grid::Grid)
-    return heatmap(f.data[:,:,convert(Int64,(length(grid.vaxes[2])-1)/2)])
+    return heatmap(vlasovSL.mean(f.data,vlasovSL.weights(ones(65)),3)[:,:,1])
 end
 
 
-function plotf(f::DistributionParticles{Float64,1,1,fullF},grid::Grid)
+function plotf(f::DistributionParticles{Float64,1},grid::Grid)
     h = Hist2D((f.v[1],f.x[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
     return heatmap(vlasovSL.Hist2D((f.x[1],f.v[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2)
 end
 
-function scatterf(f::DistributionParticles,grid::Grid)
+function scatterf(f::DistributionParticles1d2v,grid::Grid)
+    return vlasovSL.scatter(f.v[1][1:100:end],f.v[2][1:100:end],f.x[1][1:100:end], color =f.color[1:100:end]; ms=1, ma=abs.(f.w[1:100:end]./maximum(f.w[1:100:end])),msw=0)
+end
+
+
+function scatterf(f::DistributionParticles1d1v,grid::Grid)
     return vlasovSL.scatter(f.v[1][1:100:end],f.x[1][1:100:end], color =f.color[1:100:end]; ms=1, ma=abs.(f.w[1:100:end]./maximum(f.w[1:100:end])),msw=0)
 end
 

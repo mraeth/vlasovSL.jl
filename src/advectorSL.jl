@@ -41,14 +41,27 @@ end
 
 
 
-function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
-    xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.dt * grid.vaxes[1][i] / grid.delta[1],  grid.dt * grid.vaxes[2][i] / grid.delta[1]] , 1:length(grid.vaxes[1]))
+function advectX2!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
+    # xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.vaxes[1][i] ,  grid.vaxes[2][i]] , 1:length(grid.vaxes[1]))
+    xdisp = @. R(-grid.time[grid.index[1]])[1,1]* grid.vaxes[1] +  R(-grid.time[grid.index[1]])[1,2]* grid.vaxes[2]
+    println(size(xdisp[1]))
     for iv1 = 1:size(f.data)[2]
         for iv2 = 1:size(f.data)[3]
-            fshift = grid.dt * first.(xdisp)[iv1] / grid.delta[1]
+            fshift = 0.8*grid.dt * xdisp[iv1][1] / grid.delta[1]
             advector(view(f.data, :,iv1, iv2), fshift, grid)
         end
     end
+end
+
+
+function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
+    # xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.vaxes[1][i] ,  grid.vaxes[2][i]] , 1:length(grid.vaxes[1]))
+    xdisp = @. R(-grid.time[grid.index[1]])[1,1]* grid.vaxes[1] +  R(-grid.time[grid.index[1]])[1,2]* grid.vaxes[2]
+
+    ff = fft(f.data,1)
+    sshift =grid.dt / grid.delta[1]*2pi  .* outer_product([fftfreq(size(f.data)[1]),xdisp, ones(size(f.data)[3])])
+    f.data .= real(ifft(ff.*exp.(-sshift .* im),1))
+
 end
 
 
@@ -73,7 +86,7 @@ end
 
 
 function advectV!(f::DistributionGrid1d2v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
-    vdisp = map(i->R(grid.time[grid.index[1]])*[grid.dt*shiftArray[i]/grid.delta[2],0],1:length(shiftArray))
+    vdisp = map(i->R(grid.time[grid.index[1]])*[shiftArray[i],0],1:length(shiftArray))
     for iv1 = 1:size(f.data)[2]
         advectV!(DistributionGrid1d1v(view(f.data,:,iv1,:)), grid, first.(vdisp), advector)
     end
