@@ -24,13 +24,21 @@ function advectX2!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier
     end
 end
 
-function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
+function advectX3!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
     ff = fft(f.data,1)
     for iv = 1:size(ff)[2]
         sshift =grid.dt * grid.vaxes[1][iv] / grid.delta[1]*2pi  .* fftfreq(size(f.data)[1])
          @. ff[:,iv]*=exp.(-sshift .* im)
     end
     f.data .= real(ifft(ff,1))
+end
+
+function advectX!(f::DistributionGrid1d1v, grid::Grid, advector=advect1DFourier!)
+    ff = fft(f.data,1)
+    outer_product(vs) =  .*([reshape(vs[d], (ntuple(Returns(1), d-1)..., :)) for d in 1:length(vs)]... )
+    sshift =grid.dt / grid.delta[1]*2pi  .* outer_product([fftfreq(size(f.data)[1]),grid.vaxes[1]])
+
+    f.data .= real(ifft(ff.*exp.(-sshift .* im),1))
 end
 
 
@@ -52,6 +60,8 @@ function advectV2!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float6
         advector(view(f.data, ix, :), fshift, grid)
     end
 end
+
+
 
 
 function advectV!(f::DistributionGrid1d1v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
