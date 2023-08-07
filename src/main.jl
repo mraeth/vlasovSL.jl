@@ -4,10 +4,10 @@ using vlasovSL, Plots, ProgressBars
 println("Num Threads = ", Threads.nthreads())
 
 Lx = 4pi;
-nx = 256;
+nx = 64;
 
 vmax = 4;
-nv = 256
+nv = 64
 
 nt = 5000
 dt = 0.05
@@ -15,7 +15,7 @@ dt = 0.05
 epsilon = 0.3   
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1);
-# grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
+grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
 
 
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
@@ -58,7 +58,7 @@ for grid.index[1]= ProgressBar(grid.itime)
 
     if(mod(grid.index[1],1)==0)
         p1 = plotDeltaf(sim.f, sim.grid)
-        p2 = plotf(simp.f, sim.grid)
+        p2 = scatterf(simp.f, sim.grid)
         p3 = plot(sim.diag[1], sim.diag[2], yscale=:log10)
         p3 = plot!(simp.diag[1], simp.diag[2], yscale=:log10)
         

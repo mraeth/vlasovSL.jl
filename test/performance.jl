@@ -29,7 +29,7 @@ f1d2v = Distribution(grid1d2v, epsilon; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(
 fp1d2vDelta = DeltaDistribution(grid1d2v, epsilon, 1000000; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(2*pi)));
 fp1d2vFull = Distribution(grid1d2v, epsilon, 1000000; initFuncv=(v-> v^2*exp(-v^2 / 2) / sqrt(2*pi)));
 
-fs = [(f1d1v,grid1d1v), (f1d2v,grid1d2v), (fp1d1vDelta,grid1d1v), (fp1d1vFull,grid1d1v)]#, (fp1d2vDelta,grid1d2v), (fp1d2vFull,grid1d2v)];
+fs = [(f1d1v,grid1d1v), (f1d2v,grid1d2v), (fp1d1vDelta,grid1d1v), (fp1d1vFull,grid1d1v), (fp1d2vDelta,grid1d2v), (fp1d2vFull,grid1d2v)];
 
 
 suite = BenchmarkGroup()

@@ -33,8 +33,8 @@ function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, shift
     itp2 = interpolate([vdisp[2]; vdisp[2][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp1 = scale(itp1,0:grid.delta[1]:grid.max[1])
     sitp2 = scale(itp2,0:grid.delta[1]:grid.max[1])
-     @. f.v[1] +=  grid.dt*sitp1(f.x)
-     @. f.v[2] +=  grid.dt*sitp2(f.x)
+     @. f.v[1] +=  grid.dt*sitp1(f.x[1])
+     @. f.v[2] +=  grid.dt*sitp2(f.x[1])
 end
 
 

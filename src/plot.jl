@@ -1,6 +1,10 @@
 
-function deltaf(f::DistributionGrid1d1v)
+function deltaf(f::DistributionGrid1d1v, grid::Grid)
     return reduce(vcat, LinearAlgebra.transpose.(map(i->f.data[i,begin:end] - reshape(mean(f.data, dims = 1),size(f.data)[2]),1:size(f.data)[1])))
+end
+
+function deltaf(f::DistributionGrid1d2v, grid::Grid)
+    return reduce(vcat, LinearAlgebra.transpose.(map(i->f.data[i,begin:end,convert(Int64,(length(grid.vaxes[2])-1)/2)] - reshape(mean(f.data[:,:,convert(Int64,(length(grid.vaxes[2])-1)/2)], dims = 1),size(f.data)[2]),1:size(f.data)[1])))
 end
 
 
@@ -9,11 +13,11 @@ function plotf(f::DistributionGrid1d1v,grid::Grid)
 end
 
 
-function plotDeltaf(f::DistributionGrid1d1v,grid::Grid)
-    # subract Maxwellian from f
-    deltaf = reduce(vcat, LinearAlgebra.transpose.(map(i->f.data[i,begin:end] - reshape(mean(f.data, dims = 1),size(f.data)[2]),1:size(f.data)[1])))
-    return heatmap(deltaf)
+function plotDeltaf(f::DistributionGrid,grid::Grid)
+    return heatmap(deltaf(f, grid))
 end
+
+
 
 function plotf(f::DistributionGrid1d2v,grid::Grid)
     return heatmap(f.data[:,:,convert(Int64,(length(grid.vaxes[2])-1)/2)])
@@ -26,7 +30,7 @@ function plotf(f::DistributionParticles{Float64,1,1,fullF},grid::Grid)
 end
 
 function scatterf(f::DistributionParticles,grid::Grid)
-    return vlasovSL.scatter(f.v[1:100:end],f.x[1:100:end], color =f.color[1:100:end]; ms=1, ma=abs.(f.w[1:100:end]./maximum(f.w[1:100:end])),msw=0)
+    return vlasovSL.scatter(f.v[1][1:100:end],f.x[1][1:100:end], color =f.color[1:100:end]; ms=1, ma=abs.(f.w[1:100:end]./maximum(f.w[1:100:end])),msw=0)
 end
 
 

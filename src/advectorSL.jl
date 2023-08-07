@@ -77,3 +77,23 @@ function advectV!(f::DistributionGrid1d2v, grid::Grid, shiftArray::Array{Float64
 end
 
 
+function advectV2!(f::DistributionGrid1d2v, grid::Grid, shiftArray::Array{Float64,1}, advector=advect1DFourier!)
+    vdisp = map(i->R(grid.time[grid.index[1]])*[grid.dt*shiftArray[i]/grid.delta[2],0],1:length(shiftArray))
+    ff = fft(f.data,2)
+
+    Threads.@threads for ix = 1:size(ff)[1] for iv2 = 1:size(ff)[3]
+        sshift = grid.dt * first.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[2])
+         @. ff[ix,:,iv2]*=exp.(-sshift .* im)
+    end end
+    f.data .= real(ifft(ff,2))
+    ff = fft(f.data,3)
+
+    Threads.@threads for ix = 1:size(ff)[1] for iv1 = 1:size(ff)[2]
+        sshift = grid.dt * first.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[3])
+         @. ff[ix,iv1,:]*=exp.(-sshift .* im)
+    end end
+    f.data .= real(ifft(ff,3))
+
+end
+
+
