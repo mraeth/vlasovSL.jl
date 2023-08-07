@@ -16,3 +16,5 @@ function Grid(etaMin::Vector{Float64}, etaMax::Vector{Float64}, deta::Vector{Flo
             map(i-> etaMin[i]:deta[i]:etaMax[i],nx+1:length(etaMin)), 
             etaMax, etaMin, deta, 0:dt:dt*nt, 1:nt, [1])
 end
+
+outer_product(vs) =  .*([reshape(vs[d], (ntuple(Returns(1), d-1)..., :)) for d in 1:length(vs)]... )

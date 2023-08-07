@@ -29,7 +29,6 @@ function Distribution(grid::Grid, epsilon;
     dx = map(x->fct_sp.(x), grid.xaxes)
     dv = map(x->fct_v.(x), grid.vaxes)
     da = vcat(dx,dv)
-    outer_product(vs) =  .*([reshape(vs[d], (ntuple(Returns(1), d-1)..., :)) for d in 1:length(vs)]... )
     return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes)}(outer_product(da))
 end
 
