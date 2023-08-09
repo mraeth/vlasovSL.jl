@@ -1,5 +1,5 @@
 
-function fourierInterpolation(f::Vector{DT},x::DT) where DT
+function fourierInterpolation(f::Vector{CDT},x::DT) where {CDT,DT}
     k = fftfreq(length(f))*length(f)
     real(f'exp.(x/(2pi)*pi*im * k)/length(f))
 end
@@ -11,13 +11,13 @@ end
 
 
 function advectV!(f::DistributionParticles{T,1,1,fullF}, grid::Grid, e::VectorField) where T
-    sitp(x::Float64) = fourierInterpolation(e.data[1],x)
+    sitp(x::Float64) = fourierInterpolation(fft(e.data[1]),x)
      @. f.v[1] += grid.dt * sitp(f.x[1])
 
 end
 
 function advectV!(f::DistributionParticles{T,1,1,deltaF}, grid::Grid, e::VectorField) where T
-    sitp(x) = fourierInterpolation(e.data[1],x)
+    sitp(x) = fourierInterpolation(fft(e.data[1]),x)
      @. f.v[1] += grid.dt * sitp.(f.x[1])
      @. f.w += grid.dt * f.v[1] * sitp(f.x[1])
 
@@ -33,8 +33,8 @@ function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, e::Ve
     vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
 
 
-    sitp1(x) = fourierInterpolation(fist.(vdisp),x)
-    sitp2(x) = fourierInterpolation(fist.(vdisp),x)
+    sitp1(x) = fourierInterpolation(fft(fist.(vdisp)),x)
+    sitp2(x) = fourierInterpolation(fft(fist.(vdisp)),x)
     
      @. f.v[1] +=  grid.dt*sitp1(f.x[1])
      @. f.v[2] +=  grid.dt*sitp2(f.x[1])
