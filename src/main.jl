@@ -36,8 +36,6 @@ function timeStep!(sim::Simulation)
 
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-     e.data[1].=0
-     e.data[2].=1
      advectV!(sim.f, sim.grid, sim.e)
 end
 
