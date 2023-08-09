@@ -68,4 +68,4 @@ println()
 for f in fs
     print("Performance Advect v for ")
     print(typeof(f[1]), ": ")
-    println(@elapsed advectV!(f[1], f[2], e.data[1])) end
+    println(@elapsed advectV!(f[1], f[2], e)) end
