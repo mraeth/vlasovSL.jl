@@ -42,7 +42,7 @@ e = VectorField([ones(nx)])
 
 for f in fs
     suite["AdvectX"][string(typeof(f[1]))] = @benchmarkable advectX!($f[1], $f[2])
-    suite["AdvectV"][string(typeof(f[1]))] = @benchmarkable advectV!($f[1], $f[2], $e.data[1])
+    suite["AdvectV"][string(typeof(f[1]))] = @benchmarkable advectV!($f[1], $f[2], $e.)
     suite["computeRho"][string(typeof(f[1]))] = @benchmarkable compute_density!($rho1d1v, $f[1], $f[2])
 end
 
