@@ -119,7 +119,7 @@ end
         @test testPoisson(k0)<1e-12
         @test testAdiabatic(k0)<1e-12
     end
-    @test testComputeDensity()<1e-9
+    @test abs(1-testComputeDensity())<1e-9
 
 
 end
