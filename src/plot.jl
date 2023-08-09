@@ -20,7 +20,7 @@ end
 
 
 function plotf(f::DistributionGrid1d2v,grid::Grid)
-    return heatmap(vlasovSL.mean(f.data,vlasovSL.weights(ones(65)),3)[:,:,1])
+    return heatmap(vlasovSL.mean(f.data,vlasovSL.weights(ones(length(grid.vaxes[2]))),3)[:,:,1])
 end
 
 

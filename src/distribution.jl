@@ -5,8 +5,8 @@ struct DistributionGrid{DT,NX,NV,NXNV}  <: Distribution
     data :: AbstractArray{DT,NXNV}
 end
 
-DistributionGrid1d1v = DistributionGrid{Float64,1,1,2}
-DistributionGrid1d2v = DistributionGrid{Float64,1,2,3}
+const DistributionGrid1d1v{T} = DistributionGrid{T,1,1,2}
+const DistributionGrid1d2v{T} = DistributionGrid{T,1,2,3}
 
 
 
@@ -19,6 +19,8 @@ struct DistributionParticles{DT,NX,NV,ID}<:Distribution
     w :: Vector{DT}
     color :: Vector{String}
 end
+
+const DistributionParticles1d{T,NV,D} = DistributionParticles{T,1,NV,D}
 
 
 function Distribution(grid::Grid, epsilon;  

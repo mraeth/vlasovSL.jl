@@ -4,18 +4,18 @@ using vlasovSL, Plots, ProgressBars
 println("Num Threads = ", Threads.nthreads())
 
 Lx = 4pi;
-nx = 64;
+nx = 32;
 
 vmax = 4;
-nv = 64
+nv = 32
 
 nt = 5000
 dt = 0.05
 
-epsilon = 0.3   
+epsilon = 0.3
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1);
-grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
+# grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
 
 
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
@@ -23,18 +23,22 @@ initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) = (v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))
 
 f = Distribution(grid, epsilon;);
-fp = Distribution(grid, epsilon, 5000000);
+fp = Distribution(grid, epsilon, 1000000);
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
 
 
 function timeStep!(sim::Simulation)
-     advectX!(sim.f, sim.grid)
+    #  advectX!(sim.f, sim.grid)
      compute_density!(sim.rho, sim.f, sim.grid)
+     sim.rho.data .= -1 .*sim.rho.data
+
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-    #  advectV!(sim.f, sim.grid, -1 .*sim.e.data[1])
+     e.data[1].=0
+     e.data[2].=1
+     advectV!(sim.f, sim.grid, sim.e)
 end
 
 println("Performance SL")

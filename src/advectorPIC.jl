@@ -1,20 +1,20 @@
 
 
 
-function advectX!(f::DistributionParticles{Float64,1,1}, grid::Grid)
+function advectX!(f::DistributionParticles{T,1,1}, grid::Grid) where T
         @. f.x[1] =  mod(f.x[1]+  grid.dt*f.v[1], grid.max[1]-1e-5)
 end
 
 
-function advectV!(f::DistributionParticles{Float64,1,1,fullF}, grid::Grid, shiftArray::Array{Float64,1})
-    itp = interpolate([shiftArray; shiftArray[1]], BSpline(Cubic(Periodic(OnGrid()))))
+function advectV!(f::DistributionParticles{T,1,1,fullF}, grid::Grid, e::VectorField) where T
+    itp = interpolate([e.data[1];e.data[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp = scale(itp,0:grid.delta[1]:grid.max[1])
      @. f.v += grid.dt * sitp(f.x)
 
 end
 
-function advectV!(f::DistributionParticles{Float64,1,1,deltaF}, grid::Grid, shiftArray::Array{Float64,1})
-    itp = interpolate([shiftArray; shiftArray[1]], BSpline(Cubic(Periodic(OnGrid()))))
+function advectV!(f::DistributionParticles{T,1,1,deltaF}, grid::Grid, e::VectorField) where T
+    itp = interpolate([e.data[1];e.data[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp = scale(itp,0:grid.delta[1]:grid.max[1])
      @. f.v[1] += grid.dt * sitp(f.x[1])
      @. f.w += grid.dt * f.v[1] * sitp(f.x[1])
@@ -27,10 +27,10 @@ function advectX!(f::DistributionParticles{Float64,1,2}, grid::Grid)
 end
 
 
-function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, shiftArray::Array{Float64,1})
-    vdisp =[R(grid.time[grid.index[1]])[1,1] .* shiftArray,  R(grid.time[grid.index[1]])[2,1] .* shiftArray]
-    itp1 = interpolate([vdisp[1]; vdisp[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
-    itp2 = interpolate([vdisp[2]; vdisp[2][1]], BSpline(Cubic(Periodic(OnGrid()))))
+function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, e::VectorField)
+    vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
+    itp1 = interpolate([first.(vdisp); vdisp[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
+    itp2 = interpolate([last.(vdisp); vdisp[2][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp1 = scale(itp1,0:grid.delta[1]:grid.max[1])
     sitp2 = scale(itp2,0:grid.delta[1]:grid.max[1])
      @. f.v[1] +=  grid.dt*sitp1(f.x[1])
