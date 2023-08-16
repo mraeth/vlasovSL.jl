@@ -36,11 +36,11 @@ end
 
 
 function advectX!(f::DistributionGrid1d2v, grid::Grid, advector=advect1DFourier!)
-    xdisp = map(i->R(-grid.time[grid.index[1]])*[ grid.vaxes[1][i] ,  grid.vaxes[2][i]] , 1:length(grid.vaxes[1]))
-    println(size(xdisp[1]))
+    xdisp = @. R(-grid.time[grid.index[1]])[1,1]* grid.vaxes[1] +  R(-grid.time[grid.index[1]])[1,2]*  grid.vaxes[2]
     for iv1 = 1:size(f.data)[2]
         for iv2 = 1:size(f.data)[3]
-            fshift = grid.dt * xdisp[iv1][1] / grid.delta[1]
+            xdisp = R(-grid.time[grid.index[1]])[1,1]* grid.vaxes[1][iv1] +  R(-grid.time[grid.index[1]])[1,2]*  grid.vaxes[2][iv2]
+             fshift =  grid.dt * xdisp/ grid.delta[1]
             advector(view(f.data, :,iv1, iv2), fshift, grid)
         end
     end

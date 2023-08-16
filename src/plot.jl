@@ -25,8 +25,8 @@ end
 
 
 function plotf(f::DistributionParticles{Float64,1},grid::Grid)
-    h = Hist2D((f.v[1],f.x[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
-    return heatmap(vlasovSL.Hist2D((f.x[1],f.v[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2)
+    h = vlasovSL.Hist2D((f.x[1],f.v[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
+    return heatmap(h)
 end
 
 function scatterf(f::DistributionParticles1d2v,grid::Grid)
@@ -40,7 +40,7 @@ end
 
 
 
-function weightedHist2D(f::DistributionParticles{Float64,1,1,deltaF},grid::Grid) where T
+function weightedHist2D(f::DistributionParticles{Float64,1,1,deltaF},grid::Grid)
     fgrid = zeros(length(grid.xaxes[1]), length(grid.vaxes[1]));
     for i in  eachindex(f.x[1]) 
         fgrid[trunc(Int64,f.x[1][i]/grid.delta[1])+1,trunc.(Int64,mod.(f.v[1][i]-grid.min[2],grid.max[2]-grid.min[2])/grid.delta[2]).+1] += f.w[i]/length(f.x)*length(grid.xaxes[1]) end

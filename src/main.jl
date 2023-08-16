@@ -6,16 +6,16 @@ println("Num Threads = ", Threads.nthreads())
 Lx = 4pi;
 nx = 32;
 
-vmax = 4;
+vmax = 6;
 nv = 32
 
 nt = 5000
 dt = 0.05
 
-epsilon = 0.3
+epsilon = 0.01
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1);
-# grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
+grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
 
 
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
@@ -23,7 +23,7 @@ initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) = (v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))
 
 f = Distribution(grid, epsilon;);
-fp = Distribution(grid, epsilon, 1000000);
+fp = Distribution(grid, epsilon, 100000; );
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
@@ -35,7 +35,9 @@ function timeStep!(sim::Simulation)
      sim.rho.data .= -1 .*sim.rho.data
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-     advectV!(sim.f, sim.grid, sim.e)
+     sim.e.data[1] .= .4
+     sim.e.data[2] .= 0.1*sin.(sim.grid.xaxes[1])
+    advectV!(sim.f, sim.grid, sim.e)
 end
 
 println("Performance SL")
@@ -53,7 +55,7 @@ println("Performance PIC")
 for grid.index[1]= ProgressBar(grid.itime)
     timeStep!(sim)
     diagnostics(sim, grid.index[1])
-    # timeStep!(simp)
+    timeStep!(simp)
     diagnostics(simp, grid.index[1])
 
 

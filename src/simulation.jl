@@ -17,7 +17,7 @@ end
 
 function diagnostics(sim::Simulation, iTime :: Int64)
    push!(sim.diag[1], iTime *sim.grid.dt)
-   push!(sim.diag[2], sqrt(vlasovSL.mean(sim.phi.data.^2)))
+   push!(sim.diag[2], sqrt(vlasovSL.mean((sim.phi.data.-mean(sim.phi.data)).^2)))
    sim.diag[3][iTime,:] = sim.rho.data
 end
 
