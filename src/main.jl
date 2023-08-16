@@ -30,10 +30,9 @@ simp = Simulation(fp, grid);
 
 
 function timeStep!(sim::Simulation)
-    #  advectX!(sim.f, sim.grid)
+     advectX!(sim.f, sim.grid)
      compute_density!(sim.rho, sim.f, sim.grid)
      sim.rho.data .= -1 .*sim.rho.data
-
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
      advectV!(sim.f, sim.grid, sim.e)
@@ -54,7 +53,7 @@ println("Performance PIC")
 for grid.index[1]= ProgressBar(grid.itime)
     timeStep!(sim)
     diagnostics(sim, grid.index[1])
-    timeStep!(simp)
+    # timeStep!(simp)
     diagnostics(simp, grid.index[1])
 
 
@@ -71,18 +70,5 @@ for grid.index[1]= ProgressBar(grid.itime)
     end 
 
 end
-
-
-
-# p1 = plotf(sim.f, sim.grid)
-# p2 = plotf(simp.f, sim.grid)
-# p3 = plot(simp.diag[1], simp.diag[2], yscale=:log10)
-# p3 = plot!(sim.diag[1], sim.diag[2], yscale=:log10)
-
-# p4 = plot(simp.rho.data)
-# p4 = plot!(sim.rho.data)
-
-# display(plot(p1, p2, p3, p4, layout=(1, 4), size=(1800, 400)))
-
 
 

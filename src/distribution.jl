@@ -25,7 +25,7 @@ const DistributionParticles1d{T,NV,D} = DistributionParticles{T,1,NV,D}
 
 function Distribution(grid::Grid, epsilon;  
                 initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
-                initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi))) where {DT, NX,NV,NXNV}
+                initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
     fct_sp(x) = initFuncx(x)
     fct_v(v) = initFuncv(v)
     dx = map(x->fct_sp.(x), grid.xaxes)
