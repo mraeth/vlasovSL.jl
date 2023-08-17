@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1692286465335,
+  "lastUpdate": 1692287221761,
   "repoUrl": "https://github.com/mraeth/vlasovSL.jl",
   "entries": {
     "Benchmark": [
@@ -946,6 +946,100 @@ window.BENCHMARK_DATA = {
             "value": 3003727106,
             "unit": "ns",
             "extra": "gctime=110029832\nmemory=1518623856\nallocs=2510641\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "you@example.com",
+            "name": "Your Name"
+          },
+          "committer": {
+            "email": "you@example.com",
+            "name": "Your Name"
+          },
+          "distinct": true,
+          "id": "4993ff795cfa37c26f00254b331dfa0717a764e1",
+          "message": "Faster 1d2V advect v2 routine",
+          "timestamp": "2023-08-17T17:37:25+02:00",
+          "tree_id": "7c063510985b1a82c3297247ae2c48da1a511f27",
+          "url": "https://github.com/mraeth/vlasovSL.jl/commit/4993ff795cfa37c26f00254b331dfa0717a764e1"
+        },
+        "date": 1692287220798,
+        "tool": "julia",
+        "benches": [
+          {
+            "name": "AdvectV/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.deltaF}",
+            "value": 57632028,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=40544\nallocs=102\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectV/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.fullF}",
+            "value": 28409977,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=40544\nallocs=102\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectV/DistributionGrid1d1v{Float64, vlasovSL.Cart}",
+            "value": 15006481.5,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=4951008\nallocs=5653\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectV/DistributionGrid1d2v{Float64, vlasovSL.Cart}",
+            "value": 8251863636,
+            "unit": "ns",
+            "extra": "gctime=13589090\nmemory=1354234432\nallocs=8993\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "computeRho/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.deltaF}",
+            "value": 3911618.5,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=8000048\nallocs=2\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "computeRho/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.fullF}",
+            "value": 7524440,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=8816\nallocs=7\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "computeRho/DistributionGrid1d1v{Float64, vlasovSL.Cart}",
+            "value": 24000,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=4832\nallocs=17\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "computeRho/DistributionGrid1d2v{Float64, vlasovSL.Cart}",
+            "value": 15491076,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=4928\nallocs=18\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectX/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.deltaF}",
+            "value": 6769546,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=0\nallocs=0\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectX/vlasovSL.DistributionParticles{Float64, 1, 1, vlasovSL.fullF}",
+            "value": 7492640,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=0\nallocs=0\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectX/DistributionGrid1d1v{Float64, vlasovSL.Cart}",
+            "value": 3129525,
+            "unit": "ns",
+            "extra": "gctime=0\nmemory=6318112\nallocs=48\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
+          },
+          {
+            "name": "AdvectX/DistributionGrid1d2v{Float64, vlasovSL.Cart}",
+            "value": 2888643810.5,
+            "unit": "ns",
+            "extra": "gctime=122994357.5\nmemory=1518623856\nallocs=2510641\nparams={\"gctrial\":true,\"time_tolerance\":0.05,\"samples\":10000,\"evals\":1,\"gcsample\":false,\"seconds\":5,\"overhead\":0,\"memory_tolerance\":0.01}"
           }
         ]
       }
