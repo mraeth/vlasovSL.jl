@@ -20,10 +20,10 @@ grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1
 
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
 initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
-initFuncv(v) = (v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))
+initFuncv(v) =  v^2*exp(-v^2 / 2) / sqrt(2*pi)
 
 f = Distribution(grid, epsilon;initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
-fp = Distribution(grid, epsilon, 100000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
+fp = DeltaDistribution(grid, epsilon, 1000000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
@@ -59,7 +59,7 @@ for grid.index[1]= ProgressBar(grid.itime)
 
     if(mod(grid.index[1],1)==0)
         p1 = plotf(sim.f, sim.grid)
-        p2 = plotf(simp.f, sim.grid)
+        p2 = scatterf(simp.f, sim.grid)
         p3 = plot(sim.diag[1], sim.diag[2], yscale=:log10)
         p3 = plot!(simp.diag[1], simp.diag[2], yscale=:log10)
         

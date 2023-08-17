@@ -1,7 +1,12 @@
 
 abstract type Distribution end
 
-struct DistributionGrid{DT,NX,NV,NXNV}  <: Distribution
+
+abstract type Cart end
+abstract type Polar end
+
+
+struct DistributionGrid{DT,NX,NV,NXNV,ID}  <: Distribution
     data :: AbstractArray{DT,NXNV}
 end
 
@@ -25,7 +30,7 @@ const DeltaDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,deltaF}
 const FullDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,fullF}
 
 
-function Distribution(grid::Grid, epsilon;  
+function Distribution(grid::Grid, epsilon; type = Cart,  
                 initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
                 initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
     fct_sp(x) = initFuncx(x)
@@ -33,7 +38,7 @@ function Distribution(grid::Grid, epsilon;
     dx = map(x->fct_sp.(x), grid.xaxes)
     dv = map(x->fct_v.(x), grid.vaxes)
     da = vcat(dx,dv)
-    return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes)}(outer_product(da))
+    return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes), type }(outer_product(da))
 end
 
 
@@ -45,7 +50,7 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi))) 
     sx = 0:0.00001:grid.max[1]-0.00001;
     x = StatsBase.sample(sx, Weights(initFuncx.(sx)),nParticles);
-    sv = grid.min[2]:0.00001:grid.max[2]-0.00001;
+    sv = grid.min[2]+0.00001:0.00001:grid.max[2]-0.00001;
     v1 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     v2 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     w = ones(length(x))
@@ -62,7 +67,7 @@ function DeltaDistribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
     sx = 0:0.00001:grid.max[1]-0.00001;
     r = StatsBase.sample(sx, Weights(initFuncx.(sx)),nParticles);
-    sv = grid.min[2]:0.00001:grid.max[2]-0.00001;
+    sv = grid.min[2]+0.00001:00001:grid.max[2]-0.00001;
     v1 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     v2 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     w = @.  (initFuncx(r)-1)/(initFuncx(r));

@@ -98,7 +98,7 @@ function advectV2!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector
 end
 
 
-function advectV!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector=advect1DFourier!)
+function advectV3!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector=advect1DFourier!)
     vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
     ff = fft(f.data,2)
 
@@ -118,3 +118,14 @@ function advectV!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector=
 end
 
 
+function advectV!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector=advect1DFourier!)
+    vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
+    ff = fft(f.data,(2,3))
+
+    Threads.@threads for ix = 1:size(ff)[1] 
+        sshift = outer_product((grid.dt * first.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[2]) , grid.dt * last.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[3])))
+         @. ff[ix,:,:]*=exp.(-sshift .* im)
+    end 
+    f.data .= real(ifft(ff,(2,3)))
+
+end
