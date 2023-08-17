@@ -28,7 +28,7 @@ function compute_density!(rho::ScalarField{T}, f ::DistributionParticles1d{T},gr
     return rho
 end
 
-function compute_density!(rho::ScalarField{T}, f :: DistributionParticles{T,1,1,deltaF},grid::Grid) where T
+function compute_density!(rho::ScalarField{T}, f :: DeltaDistributionParticles1d,grid::Grid) where T
     @assert length(rho.data) == length(grid.xaxes[1])
     frac = 1/length(f.x[1])*length(grid.xaxes[1])
     idx = zeros(Int,length(f.x[1]))

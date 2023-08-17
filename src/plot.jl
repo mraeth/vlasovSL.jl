@@ -19,12 +19,12 @@ end
 
 
 
-function plotf(f::DistributionGrid1d2v,grid::Grid)
+function plotf(f::DistributionGrid{Float64,1,2,3},grid::Grid)
     return heatmap(vlasovSL.mean(f.data,vlasovSL.weights(ones(length(grid.vaxes[2]))),3)[:,:,1])
 end
 
 
-function plotf(f::DistributionParticles{Float64,1},grid::Grid)
+function plotf(f::FullDistributionParticles1d,grid::Grid)
     h = vlasovSL.Hist2D((f.x[1],f.v[1]),(grid.min[1]:grid.delta[1]:grid.max[1],grid.min[2]:grid.delta[2]:grid.max[2])).sumw2;
     return heatmap(h)
 end
@@ -40,14 +40,14 @@ end
 
 
 
-function weightedHist2D(f::DistributionParticles{Float64,1,1,deltaF},grid::Grid)
+function weightedHist2D(f::DeltaDistributionParticles1d,grid::Grid)
     fgrid = zeros(length(grid.xaxes[1]), length(grid.vaxes[1]));
     for i in  eachindex(f.x[1]) 
         fgrid[trunc(Int64,f.x[1][i]/grid.delta[1])+1,trunc.(Int64,mod.(f.v[1][i]-grid.min[2],grid.max[2]-grid.min[2])/grid.delta[2]).+1] += f.w[i]/length(f.x)*length(grid.xaxes[1]) end
     return fgrid
     end
 
-function plotf(f::DistributionParticles{Float64,1,1,deltaF},grid::Grid)
+function plotf(f::DeltaDistributionParticles1d,grid::Grid)
     return heatmap(weightedHist2D(f,grid))
 end
 

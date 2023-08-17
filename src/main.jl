@@ -12,7 +12,7 @@ nv = 32
 nt = 5000
 dt = 0.05
 
-epsilon = 0.01
+epsilon = 0.3
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1);
 grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
@@ -22,8 +22,8 @@ initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
 initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) = (v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))
 
-f = Distribution(grid, epsilon;);
-fp = Distribution(grid, epsilon, 100000; );
+f = Distribution(grid, epsilon;initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
+fp = Distribution(grid, epsilon, 100000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
@@ -35,8 +35,6 @@ function timeStep!(sim::Simulation)
      sim.rho.data .= -1 .*sim.rho.data
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-     sim.e.data[1] .= .4
-     sim.e.data[2] .= 0.1*sin.(sim.grid.xaxes[1])
     advectV!(sim.f, sim.grid, sim.e)
 end
 

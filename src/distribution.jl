@@ -21,6 +21,8 @@ struct DistributionParticles{DT,NX,NV,ID}<:Distribution
 end
 
 const DistributionParticles1d{T,NV,D} = DistributionParticles{T,1,NV,D}
+const DeltaDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,deltaF}
+const FullDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,fullF}
 
 
 function Distribution(grid::Grid, epsilon;  

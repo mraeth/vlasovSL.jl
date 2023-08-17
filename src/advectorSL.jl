@@ -6,10 +6,18 @@ end
 
 
 
-function advect1DFourier!(data::AbstractArray{Float64,1}, shift, grid::Grid)
+function advect1DFourier!(data::AbstractArray{Float64,1}, shift::Float64, grid::Grid)
     sshift = 2pi * shift .* fftfreq(size(data)[1])
     data .= real(ifft(fft(data) .* exp.(-sshift .* im)))
 end
+
+
+function advect1DFourier!(data::AbstractArray{Float64,1}, shift::AbstractArray{Float64,1}, grid::Grid)
+    k = fftfreq(length(data))*2pi
+    ff = fft(data)
+    data .= real(ff'exp.(-vlasovSL.outer_product((k,(0:length(data)-1).-shift))*im))'/length(data)
+end
+
 
 
 function advect1Dspline!(data::AbstractArray{Float64,1}, shift, grid::Grid)
