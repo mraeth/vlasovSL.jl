@@ -38,7 +38,7 @@ suite["AdvectX"] = BenchmarkGroup()
 suite["AdvectV"] = BenchmarkGroup()
 suite["computeRho"] = BenchmarkGroup()
 rho1d1v = ScalarField(zeros(nx))
-e = VectorField([ones(nx)])
+e = VectorField([ones(nx),ones(nx)])
 
 for f in fs
     suite["AdvectX"][string(typeof(f[1]))] = @benchmarkable advectX!($f[1], $f[2])
