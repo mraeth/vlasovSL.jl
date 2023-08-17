@@ -23,7 +23,7 @@ initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) =  v^2*exp(-v^2 / 2) / sqrt(2*pi)
 
 f = Distribution(grid, epsilon;initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
-fp = DeltaDistribution(grid, epsilon, 1000000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
+fp = Distribution(grid, epsilon, 1000000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
 
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);

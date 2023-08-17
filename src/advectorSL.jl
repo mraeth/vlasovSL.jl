@@ -123,8 +123,8 @@ function advectV!(f::DistributionGrid1d2v, grid::Grid, e::VectorField, advector=
     ff = fft(f.data,(2,3))
 
     Threads.@threads for ix = 1:size(ff)[1] 
-        sshift = outer_product((grid.dt * first.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[2]) , grid.dt * last.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[3])))
-         @. ff[ix,:,:]*=exp.(-sshift .* im)
+        sshift = outer_product((exp.(-im *grid.dt * first.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[2])) ,exp.(-im* grid.dt * last.(vdisp)[ix] / grid.delta[2]*2pi  .* fftfreq(size(f.data)[3]))))
+         @. ff[ix,:,:]*=sshift
     end 
     f.data .= real(ifft(ff,(2,3)))
 
