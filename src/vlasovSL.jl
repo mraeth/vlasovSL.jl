@@ -11,7 +11,7 @@ include("simulation.jl")
 include("plot.jl")
 
 
-export Grid, Distribution, DistributionGrid1d1v, DistributionGrid1d2v, DistributionParticles1d1v, DistributionParticles1d2v, DeltaDistributionParticles1d1v, DeltaDistributionParticles1d2v, Simulation, advectX!, advectV!, compute_density!, compute_e!, poisson!, diagnostics, plotf, scatterf, DeltaDistribution, plotDeltaf, advectX2!, advectV2!, ScalarField,VectorField
+export Grid, Distribution, DistributionGrid1d1v, DistributionGrid1d2v, DistributionParticles1d1v, DistributionParticles1d2v, DeltaDistributionParticles1d1v, DeltaDistributionParticles1d2v, Simulation, advectX!, advectV!, compute_density!, compute_e!, poisson!, diagnostics, plotf, scatterf, DeltaDistribution, plotDeltaf, advectX2!, advectV2!, ScalarField,VectorField, plotfv
 
  
 end

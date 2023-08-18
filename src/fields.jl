@@ -14,10 +14,17 @@ struct VectorField{DT}
     end
 end
 
-function compute_density!(rho::ScalarField{T}, f :: DistributionGrid, grid::Grid) where T
+function compute_density!(rho::ScalarField{T}, f :: DistributionGrid, grid::CartGrid) where T
     dim = Tuple(i for i=length(grid.xaxes)+1:length(grid.xaxes)+length(grid.vaxes))
     dv = prod(grid.delta[1+length(grid.xaxes):end])
     rho.data .= reshape(sum(f.data, dims =dim)*dv, size(f.data)[1])
+    return rho
+end
+
+function compute_density!(rho::ScalarField{T}, f :: DistributionGrid, grid::PolarGrid) where T
+    dim = Tuple(i for i=length(grid.xaxes)+1:length(grid.xaxes)+length(grid.vaxes))
+    dv = prod(grid.delta[1+length(grid.xaxes):end]) * outer_product((ones(length(grid.xaxes[1])),grid.vaxes[1],ones(length(grid.vaxes[2]))))
+    rho.data .= reshape(sum(f.data.*dv, dims =dim), size(f.data)[1])
     return rho
 end
 

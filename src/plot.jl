@@ -20,7 +20,17 @@ end
 
 
 function plotf(f::DistributionGrid{Float64,1,2,3},grid::Grid)
-    return heatmap(vlasovSL.mean(f.data,vlasovSL.weights(ones(length(grid.vaxes[2]))),3)[:,:,1])
+    return heatmap(f.data[:,:,convert(Int,round(length(grid.vaxes[2])/2))])
+end
+
+
+function plotfv(f::DistributionGrid{Float64,1,2,3,Cart},grid::Grid)
+    return heatmap(f.data[1,:,:])
+end
+
+
+function plotfv(f::DistributionGrid{Float64,1,2,3, Polar},grid::Grid)
+    return heatmap(f.data[1,:,:], proj=:polar)
 end
 
 

@@ -40,13 +40,13 @@ function advectV!(f::DistributionParticles{T,1,1,deltaF}, grid::Grid, e::VectorF
 end
 
 function advectX!(f::DistributionParticles{Float64,1,2}, grid::Grid)
-    xdisp = @. R(-grid.time[grid.index[1]])[1,1]* f.v[1] +  R(-grid.time[grid.index[1]])[1,2]* f.v[2]
+    xdisp = @. R(- grid.b0*grid.time[grid.index[1]])[1,1]* f.v[1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]* f.v[2]
      @. f.x[1] =mod(f.x[1] +  grid.dt *xdisp, grid.max[1])
 end
 
 
 function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, e::VectorField)
-    vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
+    vdisp = map(i->R(grid.b0*grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
 
 
     itp = interpolate([first.(vdisp);first.(vdisp)[1]], BSpline(Cubic(Periodic(OnGrid()))))
@@ -61,7 +61,7 @@ end
 
 
 function advectV!(f::DistributionParticles{Float64,1,2,deltaF}, grid::Grid, e::VectorField)
-    vdisp = map(i->R(grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
+    vdisp = map(i->R(grid.b0*grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
 
 
     itp = interpolate([first.(vdisp);first.(vdisp)[1]], BSpline(Cubic(Periodic(OnGrid()))))

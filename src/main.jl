@@ -14,19 +14,20 @@ dt = 0.05
 
 epsilon = 0.3
 
-grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1);
-grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1);
+grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1, 0);
+grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1, 0;);
+gridPolar = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1, 0;type = vlasovSL.Polar);
 
 
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
 initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) =  v^2*exp(-v^2 / 2) / sqrt(2*pi)
 
-f = Distribution(grid, epsilon;initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
-fp = Distribution(grid, epsilon, 1000000; initFuncv = ((v-> v^2*exp(-v^2 / 2) / sqrt(2*pi))));
+f = Distribution(grid, epsilon);
+fp = Distribution(gridPolar, epsilon);
 
 sim = Simulation(f, grid)
-simp = Simulation(fp, grid);
+simp = Simulation(fp, gridPolar);
 
 
 function timeStep!(sim::Simulation)
@@ -35,7 +36,7 @@ function timeStep!(sim::Simulation)
      sim.rho.data .= -1 .*sim.rho.data
      poisson!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-    advectV!(sim.f, sim.grid, sim.e)
+    # advectV!(sim.f, sim.grid, sim.e)
 end
 
 println("Performance SL")
@@ -57,9 +58,9 @@ for grid.index[1]= ProgressBar(grid.itime)
     diagnostics(simp, grid.index[1])
 
 
-    if(mod(grid.index[1],1)==0)
+    if(mod(grid.index[1],10)==0)
         p1 = plotf(sim.f, sim.grid)
-        p2 = scatterf(simp.f, sim.grid)
+        p2 = plotf(simp.f, simp.grid)
         p3 = plot(sim.diag[1], sim.diag[2], yscale=:log10)
         p3 = plot!(simp.diag[1], simp.diag[2], yscale=:log10)
         

@@ -2,9 +2,6 @@
 abstract type Distribution end
 
 
-abstract type Cart end
-abstract type Polar end
-
 
 struct DistributionGrid{DT,NX,NV,NXNV,ID}  <: Distribution
     data :: AbstractArray{DT,NXNV}
@@ -30,15 +27,27 @@ const DeltaDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,deltaF}
 const FullDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,fullF}
 
 
-function Distribution(grid::Grid, epsilon; type = Cart,  
-                initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
-                initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
-    fct_sp(x) = initFuncx(x)
-    fct_v(v) = initFuncv(v)
-    dx = map(x->fct_sp.(x), grid.xaxes)
-    dv = map(x->fct_v.(x), grid.vaxes)
-    da = vcat(dx,dv)
-    return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes), type }(outer_product(da))
+function Distribution(grid::CartGrid, epsilon; 
+    initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
+fct_sp(x) = initFuncx(x)
+fct_v(v) = initFuncv(v)
+dx = map(x->fct_sp.(x), grid.xaxes)
+dv = map(x->fct_v.(x), grid.vaxes)
+da = vcat(dx,dv)
+return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes), Cart }(outer_product(da))
+end
+
+
+function Distribution(grid::PolarGrid, epsilon; 
+    initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
+fct_sp(x) = initFuncx(x)
+fct_v(v) = initFuncv(v)
+dx = map(x->fct_sp.(x), grid.xaxes)
+dv = [fct_v.(grid.vaxes[1]), 1/sqrt(2pi)*ones(length(grid.vaxes[2]))]
+da = vcat(dx,dv)
+return DistributionGrid{Float64,length(grid.xaxes),length(grid.vaxes),length(grid.xaxes)+length(grid.vaxes), Polar }(outer_product(da))
 end
 
 
