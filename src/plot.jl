@@ -14,23 +14,27 @@ end
 
 
 function plotDeltaf(f::DistributionGrid,grid::Grid)
-    return heatmap(deltaf(f, grid))
+    return heatmap(deltaf(f, grid),aspect_ratio = :equal)
 end
 
 
 
-function plotf(f::DistributionGrid{Float64,1,2,3},grid::Grid)
-    return heatmap(f.data[:,:,convert(Int,round(length(grid.vaxes[2])/2))])
+function plotf(f::DistributionGrid{Float64,1,2,3,Cart},grid::Grid)
+    return heatmap(f.data[:,:,convert(Int,round(length(grid.vaxes[2])/2))],aspect_ratio = :equal)
+end
+
+function plotf(f::DistributionGrid{Float64,1,2,3,Polar},grid::PolarGrid)
+    return heatmap(hcat(f.data[:,end:-1:2,1+convert(Int,size(f.data)[3]/2)],f.data[:,:,1]))
 end
 
 
 function plotfv(f::DistributionGrid{Float64,1,2,3,Cart},grid::Grid)
-    return heatmap(f.data[1,:,:])
+    return heatmap(f.data[1,:,:],aspect_ratio = :equal)
 end
 
 
 function plotfv(f::DistributionGrid{Float64,1,2,3, Polar},grid::Grid)
-    return heatmap(f.data[1,:,:], proj=:polar)
+    return heatmap(grid.vaxes[2], grid.vaxes[1],f.data[1,:,:], proj=:polar)
 end
 
 
