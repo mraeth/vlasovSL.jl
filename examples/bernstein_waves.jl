@@ -22,12 +22,9 @@ sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
 
 function timeStep!(sim::Simulation, dt::Float64)
-     advectX!(sim.f, sim.grid, dt)
-     compute_density!(sim.rho, sim.f, sim.grid)
-    #  adiabatic!(sim.phi, sim.rho, sim.grid)
-    sim.rho.data .= -1 .*sim.rho.data
-    poisson!(sim.phi, sim.rho, sim.grid)
-
+    advectX!(sim.f, sim.grid, dt)
+    compute_density!(sim.rho, sim.f, sim.grid)
+    adiabatic!(sim.phi, sim.rho, sim.grid)
     compute_e!(sim.e, sim.phi, sim.grid)
     advectV!(sim.f, sim.grid, dt, sim.e)
 end
