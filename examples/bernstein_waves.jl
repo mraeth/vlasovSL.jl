@@ -10,7 +10,7 @@ vmax = 4
 nv = 32
 
 Tfinal = 1000
-dt = 0.025
+dt = 0.05
 nt = convert(Int,Tfinal/dt)
 epsilon = 0.025
 
@@ -29,29 +29,40 @@ sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
 
 
-function timeStep!(sim::Simulation)
-     advectX!(sim.f, sim.grid)
+function timeStep!(sim::Simulation, dt::Float64)
+     advectX!(sim.f, sim.grid, dt)
      compute_density!(sim.rho, sim.f, sim.grid)
      adiabatic!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
-    advectV!(sim.f, sim.grid, sim.e)
+    advectV!(sim.f, sim.grid, dt, sim.e)
 end
 
 println("Performance SL")
-@time timeStep!(sim)
+@time timeStep!(sim, sim.grid.dt)
 println("Performance PIC")
-@time timeStep!(simp)
+@time timeStep!(simp, simp.grid.dt)
+println(" ")
+println("Performance Diag SL")
+@time     diagnostics(sim, grid.index[1])
+println("Performance Diag PIC")
+@time     diagnostics(simp, grid.index[1])
 println(" ")
 
 println("Performance SL")
-@time timeStep!(sim)
+@time timeStep!(sim, sim.grid.dt)
 println("Performance PIC")
-@time timeStep!(simp)
+@time timeStep!(simp, simp.grid.dt)
+println("Performance Diag SL")
+@time     diagnostics(sim, grid.index[1])
+println("Performance Diag PIC")
+@time     diagnostics(simp, grid.index[1])
+println(" ")
+
 
 
 for grid.index[1]= ProgressBar(grid.itime)
     grid.index[1] = grid.index[1]
-    timeStep!(sim)
+    timeStep!(sim, sim.grid.dt)
     diagnostics(sim, grid.index[1])
 end
 

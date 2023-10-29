@@ -9,6 +9,7 @@ struct Grid{T, IT, IntIT, ID}
     b0 :: T
     itime :: IntIT
     index :: Vector{Int}
+    curr_time :: Vector{Float64}
 end
 
 
@@ -28,12 +29,12 @@ function Grid(etaMin::Vector{Float64}, etaMax::Vector{Float64}, delta::Vector{Fl
         return Grid{Float64,Vector{Float64}, Vector{Int}, Cart}(dt, 
                 map(i-> etaMin[i]:delta[i]:(etaMax[i]-delta[i]),1:nx),
                 map(i-> etaMin[i]:delta[i]:etaMax[i],nx+1:length(etaMin)), 
-                etaMax, etaMin, delta, 0:dt:dt*nt, b0,1:nt, [1])
+                etaMax, etaMin, delta, 0:dt:dt*nt, b0,1:nt, [1],[0,0])
     else
         return Grid{Float64,Vector{Float64}, Vector{Int}, Polar}(dt, 
                 map(i-> etaMin[i]:delta[i]:(etaMax[i]-delta[i]),1:nx),
                 [0:delta[nx+1]:etaMax[nx+1], 0:delta[nx+2]:2pi-delta[nx+2]], 
-                etaMax, etaMin, delta, 0:dt:dt*nt,b0, 1:nt, [1])
+                etaMax, etaMin, delta, 0:dt:dt*nt,b0, 1:nt, [1],[0,0])
     end
 end
 

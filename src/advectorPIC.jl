@@ -17,35 +17,35 @@ interpolator(data::Vector{DT}, x::DT, grid::Grid) where DT = splineInterpolation
 
 
 
-function advectX!(f::DistributionParticles{T,1,1}, grid::Grid) where T
-        @. f.x[1] =  mod(f.x[1]+  grid.dt*f.v[1], grid.max[1]-1e-5)
+function advectX!(f::DistributionParticles{T,1,1}, grid::Grid, dt::Float64) where T
+        @. f.x[1] =  mod(f.x[1]+  dt*f.v[1], grid.max[1]-1e-5)
 end
 
 
-function advectV!(f::DistributionParticles{T,1,1,fullF}, grid::Grid, e::VectorField) where T
+function advectV!(f::DistributionParticles{T,1,1,fullF}, grid::Grid, dt::Float64, e::VectorField) where T
     # sitp(x::Float64) = interpolator(e.data[1],x, grid)
     itp = interpolate([e.data[1];e.data[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp = scale(itp,0:grid.delta[1]:grid.max[1])
 
-     @. f.v[1] += grid.dt * sitp(f.x[1])
+     @. f.v[1] += dt * sitp(f.x[1])
 
 end
 
-function advectV!(f::DistributionParticles{T,1,1,deltaF}, grid::Grid, e::VectorField) where T
+function advectV!(f::DistributionParticles{T,1,1,deltaF}, grid::Grid, dt::Float64, e::VectorField) where T
     itp = interpolate([e.data[1];e.data[1][1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp = scale(itp,0:grid.delta[1]:grid.max[1])
-     @. f.v[1] += grid.dt * sitp.(f.x[1])
-     @. f.w += grid.dt * f.v[1] * sitp(f.x[1])
+     @. f.v[1] += dt * sitp.(f.x[1])
+     @. f.w += dt * f.v[1] * sitp(f.x[1])
 
 end
 
-function advectX!(f::DistributionParticles{Float64,1,2}, grid::Grid)
+function advectX!(f::DistributionParticles{Float64,1,2}, grid::Grid, dt::Float64)
     xdisp = @. R(- grid.b0*grid.time[grid.index[1]])[1,1]* f.v[1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]* f.v[2]
-     @. f.x[1] =mod(f.x[1] +  grid.dt *xdisp, grid.max[1])
+     @. f.x[1] =mod(f.x[1] +  dt *xdisp, grid.max[1])
 end
 
 
-function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, e::VectorField)
+function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, dt::Float64, e::VectorField)
     vdisp = map(i->R(grid.b0*grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
 
 
@@ -55,12 +55,12 @@ function advectV!(f::DistributionParticles{Float64,1,2,fullF}, grid::Grid, e::Ve
     itp = interpolate([last.(vdisp);last.(vdisp)[1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp2 = scale(itp,0:grid.delta[1]:grid.max[1])
     
-     @. f.v[1] +=  grid.dt*sitp1(f.x[1])
-     @. f.v[2] +=  grid.dt*sitp2(f.x[1])
+     @. f.v[1] +=  dt*sitp1(f.x[1])
+     @. f.v[2] +=  dt*sitp2(f.x[1])
 end
 
 
-function advectV!(f::DistributionParticles{Float64,1,2,deltaF}, grid::Grid, e::VectorField)
+function advectV!(f::DistributionParticles{Float64,1,2,deltaF}, grid::Grid, dt::Float64, e::VectorField)
     vdisp = map(i->R(grid.b0*grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
 
 
@@ -70,10 +70,10 @@ function advectV!(f::DistributionParticles{Float64,1,2,deltaF}, grid::Grid, e::V
     itp = interpolate([last.(vdisp);last.(vdisp)[1]], BSpline(Cubic(Periodic(OnGrid()))))
     sitp2 = scale(itp,0:grid.delta[1]:grid.max[1])
     
-     @. f.v[1] +=  grid.dt*sitp1(f.x[1])
-     @. f.v[2] +=  grid.dt*sitp2(f.x[1])
+     @. f.v[1] +=  dt*sitp1(f.x[1])
+     @. f.v[2] +=  dt*sitp2(f.x[1])
 
-     @. f.w += grid.dt * f.v[1] * sitp1(f.x[1]) +  grid.dt * f.v[2] * sitp2(f.x[1])
+     @. f.w += dt * f.v[1] * sitp1(f.x[1]) +  dt * f.v[2] * sitp2(f.x[1])
 
 end
 
