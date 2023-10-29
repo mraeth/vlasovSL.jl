@@ -1,4 +1,3 @@
-
 using vlasovSL, Plots, ProgressBars
 
 println("Num Threads = ", Threads.nthreads())
@@ -16,7 +15,6 @@ epsilon = 0.3
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1, 0);
 
-
 initFuncx(x)= (1 .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))
 initFuncv(v)= exp(-(v+1.5)^2 / 2) / sqrt(2*pi)+ exp(-(v-1.5)^2 / 2) / sqrt(2*pi)
 initFuncv(v) =  v^2*exp(-v^2 / 2) / sqrt(2*pi)
@@ -25,8 +23,7 @@ f = Distribution(grid, epsilon);
 fp = Distribution(grid, epsilon,1000000);
 
 sim = Simulation(f, grid)
-simp = Simulation(fp, grid);
-
+simp = Simulation(fp, grid); 
 
 function timeStep!(sim::Simulation, dt::Float64)
      advectX!(sim.f, sim.grid, dt)

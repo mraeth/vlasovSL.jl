@@ -1,4 +1,3 @@
-
 using vlasovSL, Plots, ProgressBars, DSP, FFTW, SpecialFunctions
 
 println("Num Threads = ", Threads.nthreads())
@@ -19,21 +18,17 @@ grid = Grid([0.,-vmax,-vmax],[Lx,vmax,vmax],[Lx/nx,2*vmax/nv, 2*vmax/nv],dt,nt,1
 f = Distribution(grid, epsilon; initFuncx = (x->1+epsilon*rand()));
 fp = Distribution(grid, epsilon,100000; initFuncx = (x->1+epsilon*rand()));
 
-
-# f = Distribution(grid, epsilon;);
-# fp = Distribution(grid, epsilon,100000;);
-
-
-
 sim = Simulation(f, grid)
 simp = Simulation(fp, grid);
-
 
 function timeStep!(sim::Simulation, dt::Float64)
      advectX!(sim.f, sim.grid, dt)
      compute_density!(sim.rho, sim.f, sim.grid)
-     adiabatic!(sim.phi, sim.rho, sim.grid)
-     compute_e!(sim.e, sim.phi, sim.grid)
+    #  adiabatic!(sim.phi, sim.rho, sim.grid)
+    sim.rho.data .= -1 .*sim.rho.data
+    poisson!(sim.phi, sim.rho, sim.grid)
+
+    compute_e!(sim.e, sim.phi, sim.grid)
     advectV!(sim.f, sim.grid, dt, sim.e)
 end
 
@@ -58,16 +53,11 @@ println("Performance Diag PIC")
 @time     diagnostics(simp, grid.index[1])
 println(" ")
 
-
-
 for grid.index[1]= ProgressBar(grid.itime)
     grid.index[1] = grid.index[1]
     timeStep!(sim, sim.grid.dt)
     diagnostics(sim, grid.index[1])
 end
-
-
-
 
 disp(ko) = sqrt(2*exp(ko^2) - besseli(0,ko^2))/sqrt(2*exp(ko^2) - besseli(0,ko^2) - 2*besseli(1,ko^2))
 nteval = round(Int,length(grid.time)/4)

@@ -1,4 +1,3 @@
-
 using vlasovSL, Plots, ProgressBars, DSP, FFTW, SpecialFunctions
 
 println("Num Threads = ", Threads.nthreads())
@@ -20,7 +19,6 @@ function timeStep!(sim::Simulation, dt::Float64)
     advectV!(sim.f, sim.grid, dt, sim.e)
 end
 
-
 function timeStepStrang!(sim::Simulation, dt::Float64)
     compute_density!(sim.rho, sim.f, sim.grid)
     adiabatic!(sim.phi, sim.rho, sim.grid)
@@ -39,7 +37,6 @@ function timeStepStrang!(sim::Simulation, dt::Float64)
 end
 
 results = []
-
 deltaT = [[1/(10*2^i) for i =1:4];1/(10*2^7)]
 
 for tS in [timeStep!,timeStepStrang!]
