@@ -42,12 +42,21 @@ println("Performance SL")
 println("Performance PIC")
 @time timeStep!(simp)
 println(" ")
+println("Performance Diag SL")
+@time     diagnostics(sim, grid.index[1])
+println("Performance Diag PIC")
+@time     diagnostics(simp, grid.index[1])
+println(" ")
 
 println("Performance SL")
 @time timeStep!(sim)
 println("Performance PIC")
 @time timeStep!(simp)
-
+println("Performance Diag SL")
+@time     diagnostics(sim, grid.index[1])
+println("Performance Diag PIC")
+@time     diagnostics(simp, grid.index[1])
+println(" ")
 
 for grid.index[1]= ProgressBar(grid.itime)
     grid.index[1] = grid.index[1]

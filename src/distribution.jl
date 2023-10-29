@@ -28,7 +28,7 @@ const FullDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,fullF}
 
 
 function Distribution(grid::CartGrid, epsilon; 
-    initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncx = (x-> (01. .+ epsilon * sin(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
 fct_sp(x) = initFuncx(x)
 fct_v(v) = initFuncv(v)
@@ -40,7 +40,7 @@ end
 
 
 function Distribution(grid::PolarGrid, epsilon; 
-    initFuncx = (x-> (01. .+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncx = (x-> (01. .+ epsilon * sin(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
 fct_sp(x) = initFuncx(x)
 fct_v(v) = initFuncv(v)
@@ -55,7 +55,7 @@ DistributionParticles1d1v = DistributionParticles{Float64,1,1}
 DistributionParticles1d2v = DistributionParticles{Float64,1,2}
 
 function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;  
-    initFuncx = (x-> (1. + epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncx = (x-> (1. + epsilon * sin(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi))) 
     sx = 0:0.00001:grid.max[1]-0.00001;
     x = StatsBase.sample(sx, Weights(initFuncx.(sx)),nParticles);
@@ -72,7 +72,7 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
 end
 
 function DeltaDistribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;  
-    initFuncx = (x-> (1+ epsilon * cos(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
+    initFuncx = (x-> (1+ epsilon * sin(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
     sx = 0:0.00001:grid.max[1]-0.00001;
     r = StatsBase.sample(sx, Weights(initFuncx.(sx)),nParticles);
