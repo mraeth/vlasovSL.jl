@@ -7,6 +7,7 @@ function compute_density!(rho::ScalarField{T}, f :: DistributionGrid, grid::Cart
 end
 
 function compute_moment!(exp::Tuple,rho::ScalarField{T}, f :: DistributionGrid, grid::CartGrid) where {T,N}
+    # vel = [[(vlasovSL.R(-0*grid.time[grid.index[1]])*[v[iv] for v in grid.vaxes ])[dim] for iv = 1:length(grid.vaxes[1])] for dim = 1:2]
     fac = vlasovSL.outer_product([[ones(length(grid.xaxes[1]))];[grid.vaxes[i].^exp[i] for i = 1:length(exp)]])
     dim = Tuple(i for i=length(grid.xaxes)+1:length(grid.xaxes)+length(grid.vaxes))
     dv = prod(grid.delta[1+length(grid.xaxes):end])

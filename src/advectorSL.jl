@@ -31,10 +31,10 @@ function advectX!(f::DistributionGrid1d1v, grid::Grid, dt::Float64)
 end
 
 function advectX!(f::DistributionGrid1d2v{DT,Cart}, grid::Grid, dt::Float64, advector=advect1DFourier!) where DT
-    xdisp = @. R(-grid.b0*grid.time[grid.index[1]])[1,1]* grid.vaxes[1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]*  grid.vaxes[2]
+    xdisp = @. R(-grid.b0*grid.curr_time[1])[1,1]* grid.vaxes[1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]*  grid.vaxes[2]
     for iv1 = 1:size(f.data)[2]
         for iv2 = 1:size(f.data)[3]
-            xdisp = R(-grid.b0*grid.time[grid.index[1]])[1,1]* grid.vaxes[1][iv1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]*  grid.vaxes[2][iv2]
+            xdisp = R(-grid.b0*grid.curr_time[1])[1,1]* grid.vaxes[1][iv1] +  R(-grid.b0*grid.time[grid.index[1]])[1,2]*  grid.vaxes[2][iv2]
             fshift =  dt * xdisp/ grid.delta[1]
             advector(view(f.data, :,iv1, iv2), fshift, grid)
         end
@@ -64,7 +64,7 @@ function advectV!(f::DistributionGrid1d1v, grid::Grid, dt::Float64, e::VectorFie
 end
 
 function advectV!(f::DistributionGrid1d2v, grid::CartGrid, dt::Float64, e::VectorField, advector=advect1DFourier!)
-    vdisp = map(i->R(grid.b0*grid.time[grid.index[1]])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
+    vdisp = map(i->R(grid.b0*grid.curr_time[1])*[e.data[1][i],e.data[2][i]],1:length(grid.xaxes[1]))
     ff = fft(f.data,(2,3))
 
     Threads.@threads for ix = 1:size(ff)[1] 
