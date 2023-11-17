@@ -17,7 +17,7 @@ end
 function poisson!(phi::ScalarField{T}, rho::ScalarField{T},grid::Grid) where T
     k2 = -2pi/grid.max[1]*fftfreq(length(rho.data),length(rho.data)).^2
     k2[1] = 1
-    phi.data .= real(ifft(fft(rho.data)./k2))
+    phi.data .= -real(ifft(fft(rho.data)./k2))
     return phi
 end
 
