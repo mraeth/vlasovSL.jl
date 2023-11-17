@@ -1,6 +1,7 @@
 
 struct Simulation
     f::Distribution
+    fe::Distribution
     rho::ScalarField
     phi::ScalarField
     e::VectorField
@@ -12,7 +13,14 @@ function Simulation(f::Distribution,grid::Grid)
     rho = ScalarField(zeros(length(grid.xaxes[1]))) 
     phi = ScalarField(zeros(length(grid.xaxes[1]))) 
     e = VectorField([zeros(length(grid.xaxes[1])) for _ in 1:length(grid.vaxes)])
-    return Simulation(f, rho,phi, e,grid,[[],[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
+    return Simulation(f,f, rho,phi, e,grid,[[],[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
+end
+
+function Simulation(f::Distribution,fe::Distribution,grid::Grid)
+    rho = ScalarField(zeros(length(grid.xaxes[1]))) 
+    phi = ScalarField(zeros(length(grid.xaxes[1]))) 
+    e = VectorField([zeros(length(grid.xaxes[1])) for _ in 1:length(grid.vaxes)])
+    return Simulation(f,fe, rho,phi, e,grid,[[],[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
 end
 
 function diagnostics(sim::Simulation, iTime :: Int64)
