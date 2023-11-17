@@ -3,15 +3,14 @@ using vlasovSL, Plots, ProgressBars
 println("Num Threads = ", Threads.nthreads())
 
 Lx = 4pi;
-nx = 64;
+nx = 128;
 
 vmax = 4;
-nv = 64
+nv = 128
 
 nt = 5000
-dt = 0.05
-
-epsilon = 0.3
+dt = 0.025
+epsilon = 0.01
 
 grid = Grid([0.0, -vmax], [Lx, vmax], [Lx / nx, 2 * vmax / nv], dt, nt, 1, 0);
 
@@ -30,6 +29,7 @@ function timeStep!(sim::Simulation, dt::Float64)
      compute_density!(sim.rho, sim.f, sim.grid)
      sim.rho.data .= -1 .*sim.rho.data
      poisson!(sim.phi, sim.rho, sim.grid)
+    #  adiabatic!(sim.phi, sim.rho, sim.grid)
      compute_e!(sim.e, sim.phi, sim.grid)
     advectV!(sim.f, sim.grid, dt, sim.e)
 end
@@ -60,12 +60,13 @@ for grid.index[1]= ProgressBar(grid.itime)
     timeStep!(sim, sim.grid.dt)
     diagnostics(sim, grid.index[1])
     timeStep!(simp, sim.grid.dt)
-    diagnostics(simp, grid.index[1])
 
 
     if(mod(grid.index[1],10)==0)
         p1 = plotf(sim.f, sim.grid)
-        p2 = plotf(simp.f, simp.grid)
+        p2 = scatterf(simp.f, simp.grid)
+        diagnostics(simp, grid.index[1])
+
 
         p3 = plot(sim.diag[1], sim.diag[2], yscale=:log10)
         p3 = plot!(simp.diag[1], simp.diag[2], yscale=:log10)
