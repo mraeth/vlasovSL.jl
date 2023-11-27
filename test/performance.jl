@@ -41,8 +41,8 @@ rho1d1v = ScalarField(zeros(nx))
 e = VectorField([ones(nx),ones(nx)])
 
 for f in fs
-    suite["AdvectX"][string(typeof(f[1]))] = @benchmarkable advectX!($f[1], $f[2])
-    suite["AdvectV"][string(typeof(f[1]))] = @benchmarkable advectV!($f[1], $f[2], $e)
+    suite["AdvectX"][string(typeof(f[1]))] = @benchmarkable advectX!($f[1], $f[2],0.1)
+    suite["AdvectV"][string(typeof(f[1]))] = @benchmarkable advectV!($f[1], $f[2],0.1, $e)
     suite["computeRho"][string(typeof(f[1]))] = @benchmarkable compute_density!($rho1d1v, $f[1], $f[2])
 end
 
@@ -56,7 +56,7 @@ BenchmarkTools.save("output.json", median(results))
 for f in fs 
     print("Performance Advect x for ")
     print(typeof(f[1]), ": ")
-    println(@elapsed advectX!(f[1], f[2])) end
+    println(@elapsed advectX!(f[1], f[2],0.1)) end
 
 println()
 for f in fs
@@ -68,4 +68,4 @@ println()
 for f in fs
     print("Performance Advect v for ")
     print(typeof(f[1]), ": ")
-    println(@elapsed advectV!(f[1], f[2], e)) end
+    println(@elapsed advectV!(f[1], f[2],0.1, e)) end
