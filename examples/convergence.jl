@@ -6,16 +6,17 @@ Lx = 20/3 * π;
 
 vmax = 4
 nv = 33
-nx = 64
-B=0
+nx = 32
+B=0.0
 
 epsilon = 0.025
 
 function computeVadvection(sim::Simulation, dt::Float64)
     compute_density!(sim.rho, sim.f, sim.grid)
-    adiabatic!(sim.phi, sim.rho, sim.grid)
-    compute_e!(sim.e, sim.phi, sim.grid)
-    # sim.e.data[1].=0.01
+    # poisson!(sim.phi, sim.rho, sim.grid)
+    # compute_e!(sim.e, sim.phi, sim.grid)
+    sim.e.data[1].=0.01
+    sim.e.data[2].=0.01
     advectV!(sim.f, sim.grid, dt, sim.e)
 end
 
@@ -54,28 +55,13 @@ function timeStepStrang2!(sim::Simulation, dt::Float64)
     end
 end
 
-function timeStepStrang3!(sim::Simulation, dt::Float64)
-    compute_density!(sim.rho, sim.f, sim.grid)
-    adiabatic!(sim.phi, sim.rho, sim.grid)
-    compute_e!(sim.e, sim.phi, sim.grid)
-    # sim.e.data[1].=0.01
-
-
-    advectV!(sim.f, sim.grid, dt/2, sim.e)
-    computeXadvection(sim,dt)
-    advectV!(sim.f, sim.grid, dt/2, sim.e)
-    
-    sim.grid.curr_time[1]+=dt
-end
-
-
 
 
 results = []
-Tmax = 4
-deltaT = [[1/(10*2^i) for i =1:4];1/(10*2^7)]
+Tmax = 0.2
+deltaT = [[1/(10*2^i) for i =1:2];1/(10*2^10)]
 
-for tS in [timeStep!,timeStepStrang1!,timeStepStrang2!,timeStepStrang3!]
+for tS in [timeStep!,timeStepStrang1!,timeStepStrang2!]
     result= []
     for dt in deltaT
 
@@ -103,7 +89,7 @@ order = [comp_order(deltaT[1:end-1], result) for result in results]
  
 
 
-plot(deltaT[1:length(deltaT)-1], results[1],legend=:bottomright, xaxis=:log, yaxis=:log, label ="w/o Strang Splitting, Δt^"*string(round(order[1],digits=2)))
+plot(deltaT[1:length(deltaT)-1], results[1],legend=:topleft, xaxis=:log, yaxis=:log, label ="w/o Strang Splitting, Δt^"*string(round(order[1],digits=2)))
 for i in 2:length(results)
 plot!(deltaT[1:length(deltaT)-1], results[i], xaxis=:log, yaxis=:log, label ="w/ Strang Splitting"*string(i-1)*", Δt^"*string(round(order[i],digits=2)))
 end
