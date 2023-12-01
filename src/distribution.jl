@@ -9,6 +9,7 @@ end
 
 const DistributionGrid1d1v{T} = DistributionGrid{T,1,1,2}
 const DistributionGrid1d2v{T} = DistributionGrid{T,1,2,3}
+const DistributionGrid2d2v{T} = DistributionGrid{T,2,2,4}
 
 
 
@@ -29,7 +30,7 @@ const FullDistributionParticles1d{T,NV} = DistributionParticles{T,1,NV,fullF}
 
 function Distribution(grid::CartGrid, epsilon; 
     initFuncx = (x-> (01. .+ epsilon * sin(2pi/(grid.xaxes[1][end]+grid.delta[1])*x ))),
-    initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)))
+    initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi)), initFuncv1 = initFuncv)
 fct_sp(x) = initFuncx(x)
 fct_v(v) = initFuncv(v)
 dx = map(x->fct_sp.(x), grid.xaxes)
@@ -59,7 +60,7 @@ function Distribution(grid::Grid, epsilon :: Float64 ,nParticles :: Int64;
     initFuncv = (v-> exp(-v^2 / 2) / sqrt(2*pi))) 
     sx = 0:0.00001:grid.max[1]-0.00001;
     x = StatsBase.sample(sx, Weights(initFuncx.(sx)),nParticles);
-    sv = grid.min[2]+0.00001:0.00001:grid.max[2]-0.00001;
+    sv = grid.min[2]:0.00001:grid.max[2]-0.00001;
     v1 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     v2 = StatsBase.sample(sv, Weights(initFuncv.(sv)),nParticles);
     w = ones(length(x))

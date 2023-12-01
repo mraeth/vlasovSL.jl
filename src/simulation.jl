@@ -10,9 +10,10 @@ struct Simulation
 end
 
 function Simulation(f::Distribution,grid::Grid)
-    rho = ScalarField(zeros(length(grid.xaxes[1]))) 
-    phi = ScalarField(zeros(length(grid.xaxes[1]))) 
-    e = VectorField([zeros(length(grid.xaxes[1])) for _ in 1:length(grid.vaxes)])
+    xdim = Tuple([length(axes) for axes in grid.xaxes ])
+    rho = ScalarField(zeros(xdim)) 
+    phi = ScalarField(zeros(xdim)) 
+    e = VectorField([zeros(xdim) for _ in 1:length(grid.vaxes)])
     return Simulation(f,f, rho,phi, e,grid,[[],[],[],zeros(length(grid.itime), length(grid.xaxes[1]))]);
 end
 
